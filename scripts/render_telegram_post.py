@@ -130,17 +130,38 @@ def find_offer(slug: str, payload: dict) -> dict:
     raise SystemExit(f"Offerta non trovata: {slug}")
 
 
+def is_new_customer_offer(offer: dict) -> bool:
+    for item in offer.get("requirements", []):
+        if "nuovo cliente" in item.lower():
+            return True
+    return False
+
+
 def bonus_hook(offer: dict) -> str:
     difficulty = humanize_difficulty(offer.get("difficulty", ""))
     if offer.get("bonus_cliente_fixed"):
         return (
-            f"Puoi ottenere <b>{html.escape(offer['bonus_cliente'])}</b> con una procedura "
-            f"<b>{difficulty}</b> e un tempo stimato di circa <b>{html.escape(offer['estimated_time'])}</b>."
+            f"Bonus <b>{html.escape(offer['bonus_cliente'])}</b> con procedura "
+            f"<b>{difficulty}</b> in circa <b>{html.escape(offer['estimated_time'])}</b>."
         )
     return (
-        f"Il bonus per il nuovo cliente e <b>{html.escape(offer['bonus_cliente'])}</b>: "
-        f"controlla l'importo finale nell'app e segui la procedura descritta sotto."
+        f"Bonus <b>{html.escape(offer['bonus_cliente'])}</b>: "
+        f"controlla l'importo finale nell'app prima di completare i passaggi."
     )
+
+
+def conversion_angle(offer: dict) -> str:
+    if offer.get("bonus_cliente_fixed") and offer.get("difficulty") == "easy":
+        return "Promo semplice da completare se vuoi partire con un bonus chiaro."
+    if offer.get("bonus_cliente_fixed"):
+        return "Promo utile se vuoi un bonus chiaro seguendo una guida passo passo."
+    return "Promo da controllare bene: il valore finale puo cambiare, quindi segui la guida senza errori."
+
+
+def safety_line(offer: dict) -> str:
+    if offer.get("bonus_cliente_fixed"):
+        return "Segui i passaggi in ordine per non perdere il bonus."
+    return "Controlla l'importo in app e completa ogni requisito prima di aspettare il premio."
 
 
 def build_text(offer: dict, guide_url: str) -> str:
@@ -150,36 +171,45 @@ def build_text(offer: dict, guide_url: str) -> str:
     effective_note = html.escape(offer["effective_gain_note"])
     bonus_note = html.escape(offer.get("bonus_note", ""))
     verified_at = html.escape(format_date(offer["last_verified_at"]))
+    intro = html.escape(conversion_angle(offer))
+    safe_tip = html.escape(safety_line(offer))
+    audience_parts = []
+    if is_new_customer_offer(offer):
+        audience_parts.append("solo nuovi clienti")
+    audience_parts.append(difficulty)
+    audience_parts.append(html.escape(offer['estimated_time']))
+    audience_line = " | ".join(audience_parts)
 
     call_to_action = (
-        "👇 Apri la guida completa e segui i passaggi in ordine."
+        "👇 Apri la guida e parti da li."
         if guide_url
-        else "👇 Usa i pulsanti qui sotto per aprire l'offerta e seguire i passaggi."
+        else "👇 Apri l'offerta dal pulsante qui sotto."
     )
 
     lines = [
-        f"🔥 <b>OFFERTA DEL GIORNO: {name}</b>",
+        f"🔥 <b>{name}: bonus {html.escape(offer['bonus_cliente'])}</b>",
         "",
         bonus_hook(offer),
         "",
-        "✅ <b>Cosa devi fare</b>",
+        intro,
+        "",
+        f"🎯 <b>Ideale per:</b> {audience_line}",
+        "",
+        "✅ <b>Passaggi da seguire</b>",
         "1. Apri il servizio dalla guida qui sotto." if guide_url else "1. Apri il servizio dal pulsante qui sotto.",
         "2. Completa registrazione e verifica identita.",
-        "3. Rispetta queste condizioni:",
+        "3. Completa questi requisiti:",
     ]
 
-    for item in offer.get("requirements", []):
+    for item in offer.get("requirements", [])[:3]:
         lines.append(f"• {html.escape(item)}")
 
     lines.extend(
         [
             "4. Attendi il bonus previsto dalla campagna.",
             "",
-            f"💸 <b>Guadagno effettivo:</b> {effective_gain}",
+            f"💸 <b>Guadagno reale:</b> {effective_gain}",
             effective_note,
-            "",
-            f"⏱ <b>Difficolta:</b> {difficulty}",
-            f"⌛ <b>Tempo stimato:</b> {html.escape(offer['estimated_time'])}",
         ]
     )
 
@@ -188,6 +218,8 @@ def build_text(offer: dict, guide_url: str) -> str:
 
     lines.extend(
         [
+            "",
+            f"🛡 <b>Consiglio:</b> {safe_tip}",
             "",
             f"🔎 <b>Dati verificati:</b> {verified_at}",
             "",
@@ -208,19 +240,19 @@ def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
 
     first_row: list[dict[str, str]] = []
     if guide_url:
-        first_row.append({"text": "Apri la guida", "url": guide_url})
+        first_row.append({"text": "Apri guida bonus", "url": guide_url})
     elif offer.get("official_url"):
-        first_row.append({"text": "Vai alla promo", "url": offer["official_url"]})
+        first_row.append({"text": "Attiva la promo", "url": offer["official_url"]})
 
     if site_url:
-        first_row.append({"text": "Apri il sito", "url": site_url})
+        first_row.append({"text": "Vai al sito", "url": site_url})
 
     if first_row:
         inline_keyboard.append(first_row[:2])
 
     second_row: list[dict[str, str]] = []
     if channel_url:
-        second_row.append({"text": "Canale Telegram", "url": channel_url})
+        second_row.append({"text": "Altri bonus attivi", "url": channel_url})
 
     if extra_social and extra_social[1] != channel_url:
         second_row.append({"text": extra_social[0], "url": extra_social[1]})
@@ -229,7 +261,7 @@ def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
         inline_keyboard.append(second_row[:2])
 
     if guide_url and offer.get("official_url"):
-        inline_keyboard.append([{"text": "Fonte ufficiale", "url": offer["official_url"]}])
+        inline_keyboard.append([{"text": "Controlla termini", "url": offer["official_url"]}])
 
     return {"inline_keyboard": inline_keyboard}
 

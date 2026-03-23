@@ -79,6 +79,38 @@ def format_date(value: str) -> str:
         return value
 
 
+def is_new_customer_offer(offer: dict) -> bool:
+    for item in offer.get("requirements", []):
+        if "nuovo cliente" in item.lower():
+            return True
+    return False
+
+
+def offer_status_label(offer: dict) -> str:
+    return "BONUS ATTIVO" if offer.get("bonus_cliente_fixed") else "PROMO ATTIVA"
+
+
+def offer_support_headline(offer: dict) -> str:
+    difficulty = DIFFICULTY_LABELS.get(offer.get("difficulty", ""), offer.get("difficulty", ""))
+    if offer.get("bonus_cliente_fixed") and offer.get("difficulty") == "easy":
+        return f"Attivabile in tempi rapidi con procedura {difficulty.lower()}."
+    if offer.get("bonus_cliente_fixed"):
+        return f"Bonus chiaro per chi vuole seguire una procedura {difficulty.lower()} senza improvvisare."
+    return "Importo variabile: controlla il premio in app e segui la guida passo passo."
+
+
+def offer_conversion_line(offer: dict) -> str:
+    if is_new_customer_offer(offer):
+        return "Solo nuovi clienti"
+    return "Guida consigliata"
+
+
+def offer_risk_reversal_line(offer: dict) -> str:
+    if offer.get("bonus_cliente_fixed"):
+        return "Segui i passaggi in ordine per non perdere il bonus."
+    return "Verifica bene importo e requisiti prima di completare i passaggi."
+
+
 def load_font(weight: str, size: int):
     if ImageFont is None:
         raise SystemExit(
@@ -266,81 +298,99 @@ def render_card(offer: dict, base_url: str, out_path: Path, use_openai_backgroun
 
     primary = offer.get("visual", {}).get("primary", "#102B50")
     accent = offer.get("visual", {}).get("accent", "#74C947")
+    accent_rgb = hex_to_rgb(accent)
+    primary_rgb = hex_to_rgb(primary)
 
-    font_brand = load_font("bold", 34)
+    font_brand = load_font("bold", 30)
     font_bank = load_font("bold", 42)
-    font_badge = load_font("bold", 30)
-    font_bonus = load_font("bold", 118)
-    font_section = load_font("bold", 34)
+    font_status = load_font("bold", 28)
+    font_kicker = load_font("bold", 30)
+    font_bonus = load_font("bold", 126 if len(offer["bonus_cliente"]) <= 6 else 96)
+    font_title = load_font("bold", 42)
+    font_section = load_font("bold", 32)
     font_body = load_font("regular", 30)
-    font_small = load_font("regular", 24)
+    font_body_small = load_font("regular", 27)
+    font_chip = load_font("bold", 26)
+    font_small = load_font("regular", 23)
 
-    draw.rounded_rectangle((64, 56, 420, 120), radius=28, fill=(255, 255, 255, 230))
-    draw.text((92, 74), "BONUSCONTIITALIA", font=font_brand, fill=hex_to_rgb(primary))
+    draw.rounded_rectangle((54, 48, width - 54, height - 48), radius=46, outline=(255, 255, 255, 44), width=2)
+
+    draw.rounded_rectangle((64, 58, 382, 112), radius=24, fill=(255, 255, 255, 235))
+    draw.text((88, 73), "BONUSCONTIITALIA", font=font_brand, fill=primary_rgb)
+
+    status_text = offer_status_label(offer)
+    status_width = draw.textbbox((0, 0), status_text, font=font_status)[2] + 62
+    draw.rounded_rectangle((width - status_width - 64, 58, width - 64, 112), radius=24, fill=(*accent_rgb, 235))
+    draw.text((width - status_width - 34, 72), status_text, font=font_status, fill=(8, 15, 29))
+
+    draw.rounded_rectangle((64, 144, width - 64, 490), radius=42, fill=(255, 255, 255, 242))
+    draw.rounded_rectangle((86, 166, 340, 214), radius=18, fill=(*accent_rgb, 245))
+    draw.text((112, 178), "BONUS CLIENTE", font=font_kicker, fill=(8, 15, 29))
+    draw.text((96, 234), offer["bonus_cliente"], font=font_bonus, fill=primary_rgb)
 
     bank_label = safe_image_label(offer)
-    bank_bbox = draw.textbbox((0, 0), bank_label, font=font_bank)
-    bank_width = bank_bbox[2] - bank_bbox[0] + 88
-    draw.rounded_rectangle((width - bank_width - 64, 56, width - 64, 128), radius=30, fill=(9, 16, 30, 180))
-    draw.text((width - bank_width - 22, 76), bank_label, font=font_bank, fill=(255, 255, 255))
+    draw_wrapped_text(draw, (402, 184), bank_label, font_bank, primary_rgb, 560, 2, spacing=2)
+    draw_wrapped_text(draw, (402, 250), offer_support_headline(offer), font_body, (39, 50, 66), 560, 3, spacing=6)
 
-    draw.rounded_rectangle((64, 164, width - 64, 456), radius=42, fill=(255, 255, 255, 245))
-    draw.rounded_rectangle((88, 190, 336, 244), radius=18, fill=hex_to_rgb(accent))
-    draw.text((112, 203), "BONUS CLIENTE", font=font_badge, fill=(9, 16, 30))
-    draw.text((98, 258), offer["bonus_cliente"], font=font_bonus, fill=hex_to_rgb(primary))
+    hero_chip_data = [
+        offer_conversion_line(offer),
+        DIFFICULTY_LABELS.get(offer.get("difficulty", ""), offer.get("difficulty", "")),
+        offer["estimated_time"],
+    ]
+    chip_x = 402
+    chip_y = 372
+    chip_spacing = 16
+    for chip in hero_chip_data:
+        text_width = min(300, int(draw.textbbox((0, 0), chip, font=font_chip)[2] + 48))
+        if chip_x + text_width > width - 84:
+            chip_x = 402
+            chip_y += 70
+        draw.rounded_rectangle((chip_x, chip_y, chip_x + text_width, chip_y + 54), radius=18, fill=(13, 24, 43, 212))
+        draw.text((chip_x + 22, chip_y + 14), chip, font=font_chip, fill=(255, 255, 255))
+        chip_x += text_width + chip_spacing
 
-    bonus_right_x = 410
-    draw.text((bonus_right_x, 230), "Guadagno reale", font=font_section, fill=hex_to_rgb(primary))
-    draw_wrapped_text(draw, (bonus_right_x, 282), offer["effective_gain"], font_section, (16, 22, 37), 540, 2, spacing=6)
+    draw.rounded_rectangle((64, 524, width - 64, 588), radius=24, fill=(*accent_rgb, 232))
     draw_wrapped_text(
         draw,
-        (bonus_right_x, 336),
-        offer["effective_gain_note"],
-        font_body,
-        (56, 66, 82),
-        540,
-        3,
-        spacing=6,
+        (96, 542),
+        offer_risk_reversal_line(offer),
+        font_section,
+        (8, 15, 29),
+        width - 192,
+        2,
+        spacing=4,
     )
 
-    draw.rounded_rectangle((64, 500, width - 64, 900), radius=42, fill=(9, 16, 30, 190))
-    draw.text((96, 536), "COME OTTENERE IL BONUS", font=font_section, fill=(255, 255, 255))
+    draw.rounded_rectangle((64, 618, width - 64, 972), radius=42, fill=(9, 16, 30, 196))
+    draw.text((96, 650), "3 PASSAGGI DA COMPLETARE", font=font_title, fill=(255, 255, 255))
+    draw.text((96, 700), "Seguili in ordine e non saltare nessun requisito.", font=font_body_small, fill=(200, 211, 226))
 
-    bullet_y = 606
+    step_y = 782
     for index, item in enumerate(offer.get("requirements", [])[:3], start=1):
-        circle_x = 112
-        circle_y = bullet_y + (index - 1) * 88
-        draw.ellipse((circle_x - 20, circle_y - 20, circle_x + 20, circle_y + 20), fill=hex_to_rgb(accent))
-        draw.text((circle_x - 8, circle_y - 16), str(index), font=font_badge, fill=(8, 15, 29))
-        draw_wrapped_text(
-            draw,
-            (154, circle_y - 24),
-            item,
-            font_body,
-            (255, 255, 255),
-            780,
-            2,
-            spacing=6,
-        )
+        bubble_x = 114
+        bubble_y = step_y + (index - 1) * 86
+        draw.ellipse((bubble_x - 23, bubble_y - 23, bubble_x + 23, bubble_y + 23), fill=(*accent_rgb, 255))
+        draw.text((bubble_x - 10, bubble_y - 18), str(index), font=font_chip, fill=(8, 15, 29))
+        draw_wrapped_text(draw, (164, bubble_y - 24), item, font_body, (255, 255, 255), 780, 2, spacing=6)
 
-    chip_top = 940
+    chip_top = 1012
     chip_width = (width - 64 * 2 - 24 * 2) // 3
     chips = [
-        ("Difficolta", DIFFICULTY_LABELS.get(offer.get("difficulty", ""), offer.get("difficulty", ""))),
-        ("Tempo", offer["estimated_time"]),
+        ("Guadagno", offer["effective_gain"]),
         ("Verifica", format_date(offer["last_verified_at"])),
+        ("Extra", offer.get("bonus_note") or "Guida passo passo"),
     ]
     for index, (label, value) in enumerate(chips):
         left = 64 + index * (chip_width + 24)
         right = left + chip_width
-        draw.rounded_rectangle((left, chip_top, right, chip_top + 132), radius=32, fill=(255, 255, 255, 232))
-        draw.text((left + 28, chip_top + 26), label.upper(), font=font_small, fill=(67, 79, 100))
-        draw_wrapped_text(draw, (left + 28, chip_top + 62), value, font_section, hex_to_rgb(primary), chip_width - 56, 2, spacing=4)
+        draw.rounded_rectangle((left, chip_top, right, chip_top + 148), radius=32, fill=(255, 255, 255, 232))
+        draw.text((left + 26, chip_top + 24), label.upper(), font=font_small, fill=(67, 79, 100))
+        draw_wrapped_text(draw, (left + 26, chip_top + 60), value, font_section, primary_rgb, chip_width - 52, 3, spacing=4)
 
-    draw.rounded_rectangle((64, 1112, width - 64, 1260), radius=38, fill=hex_to_rgb(accent))
-    draw.text((98, 1154), "GUIDA PASSO PASSO SU BONUSCONTIITALIA", font=font_section, fill=(8, 15, 29))
-    footer = base_url.replace("https://", "").replace("http://", "") if base_url else "Canale Telegram e guida completa in descrizione"
-    draw_wrapped_text(draw, (100, 1200), footer, font_body, (8, 15, 29), width - 180, 1, spacing=4)
+    draw.rounded_rectangle((64, 1192, width - 64, 1286), radius=36, fill=(*accent_rgb, 255))
+    draw.text((92, 1218), "APRI LA GUIDA E SEGUI I PASSAGGI", font=font_section, fill=(8, 15, 29))
+    footer = base_url.replace("https://", "").replace("http://", "") if base_url else "Link completo nel post Telegram"
+    draw_wrapped_text(draw, (94, 1250), footer, font_small, (8, 15, 29), width - 188, 1, spacing=4)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(out_path, format="PNG")
