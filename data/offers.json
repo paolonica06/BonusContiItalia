@@ -11,6 +11,10 @@
       "bonus_note": "20€ per chi invita",
       "effective_gain": "10€ pieni",
       "effective_gain_note": "Serve almeno un acquisto valido con carta entro 90 giorni.",
+      "deposit_required": "1 acquisto con carta",
+      "deposit_short": "1 acquisto",
+      "support_note": "Se ti serve 1€ per fare il primo acquisto, posso inviartelo io.",
+      "support_short": "Ti mando io 1€",
       "difficulty": "easy",
       "estimated_time": "5 minuti",
       "requirements": [
@@ -38,6 +42,10 @@
       "bonus_note": "Promo buddy Club 100 valida fino al 20 luglio 2026",
       "effective_gain": "Fino a 50€",
       "effective_gain_note": "Con carta digitale il bonus resta pieno; la carta fisica puo avere costi di emissione e spedizione.",
+      "deposit_required": "Almeno 10€ di transazioni",
+      "deposit_short": "10€ di spese",
+      "support_note": "Se vuoi partire subito, posso inviarti 1€ e poi completi tu il resto dei 10€ richiesti.",
+      "support_short": "Ti aiuto con 1€",
       "difficulty": "easy",
       "estimated_time": "5-10 minuti",
       "requirements": [
@@ -65,6 +73,10 @@
       "bonus_note": "Il premio standard viene definito nella schermata inviti dell'app",
       "effective_gain": "Da verificare in app",
       "effective_gain_note": "I termini consultati non pubblicano un importo cash fisso per il nuovo cliente.",
+      "deposit_required": "Ricarica da fonte esterna",
+      "deposit_short": "Ricarica esterna",
+      "support_note": "Se ti serve 1€ per testare il primo passaggio, scrivimi e ti aiuto io.",
+      "support_short": "Supporto 1€",
       "difficulty": "medium",
       "estimated_time": "10-15 minuti",
       "requirements": [
@@ -93,6 +105,10 @@
       "bonus_note": "Premio personalizzato in base alla campagna attiva",
       "effective_gain": "Da verificare",
       "effective_gain_note": "Il valore dipende dalle condizioni mostrate nell'app e dalla campagna attiva.",
+      "deposit_required": "Prima operazione valida prevista dalla campagna",
+      "deposit_short": "Operazione valida",
+      "support_note": "Se per partire ti serve 1€ di test, scrivimi e vediamo insieme come usarlo.",
+      "support_short": "Supporto 1€",
       "difficulty": "hard",
       "estimated_time": "10-15 minuti",
       "requirements": [

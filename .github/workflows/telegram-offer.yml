@@ -20,9 +20,6 @@ on:
 jobs:
   telegram-update:
     runs-on: ubuntu-latest
-    env:
-      OPENAI_IMAGE_MODEL: gpt-image-1-mini
-      OPENAI_IMAGE_QUALITY: low
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -85,22 +82,11 @@ jobs:
       - name: Generate promo image
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          if [ -n "${OPENAI_API_KEY}" ]; then
-            python3 scripts/generate_telegram_card.py \
-              --slug "${{ steps.selected.outputs.slug }}" \
-              --base-url "${SITE_BASE_URL}" \
-              --out tmp/telegram/promo-card.png \
-              --use-openai-background \
-              --openai-model "${OPENAI_IMAGE_MODEL}" \
-              --openai-quality "${OPENAI_IMAGE_QUALITY}"
-          else
-            python3 scripts/generate_telegram_card.py \
-              --slug "${{ steps.selected.outputs.slug }}" \
-              --base-url "${SITE_BASE_URL}" \
-              --out tmp/telegram/promo-card.png
-          fi
+          python3 scripts/generate_telegram_card.py \
+            --slug "${{ steps.selected.outputs.slug }}" \
+            --base-url "${SITE_BASE_URL}" \
+            --out tmp/telegram/promo-card.png
 
       - name: Attach promo image to Telegram payload
         run: |

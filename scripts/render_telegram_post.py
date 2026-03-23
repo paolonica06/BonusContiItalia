@@ -166,19 +166,11 @@ def safety_line(offer: dict) -> str:
 
 def build_text(offer: dict, guide_url: str) -> str:
     name = html.escape(offer["name"])
-    difficulty = html.escape(humanize_difficulty(offer.get("difficulty", "")))
     effective_gain = html.escape(offer["effective_gain"])
     effective_note = html.escape(offer["effective_gain_note"])
     bonus_note = html.escape(offer.get("bonus_note", ""))
-    verified_at = html.escape(format_date(offer["last_verified_at"]))
-    intro = html.escape(conversion_angle(offer))
-    safe_tip = html.escape(safety_line(offer))
-    audience_parts = []
-    if is_new_customer_offer(offer):
-        audience_parts.append("solo nuovi clienti")
-    audience_parts.append(difficulty)
-    audience_parts.append(html.escape(offer['estimated_time']))
-    audience_line = " | ".join(audience_parts)
+    deposit_required = html.escape(offer.get("deposit_required", "Da verificare"))
+    support_short = html.escape(offer.get("support_short", ""))
 
     call_to_action = (
         "👇 Apri la guida e parti da li."
@@ -189,11 +181,8 @@ def build_text(offer: dict, guide_url: str) -> str:
     lines = [
         f"🔥 <b>{name}: bonus {html.escape(offer['bonus_cliente'])}</b>",
         "",
-        bonus_hook(offer),
-        "",
-        intro,
-        "",
-        f"🎯 <b>Ideale per:</b> {audience_line}",
+        f"💸 <b>Guadagno cliente:</b> {effective_gain}",
+        f"💳 <b>Spesa / deposito richiesto:</b> {deposit_required}",
         "",
         "✅ <b>Passaggi da seguire</b>",
         "1. Apri il servizio dalla guida qui sotto." if guide_url else "1. Apri il servizio dal pulsante qui sotto.",
@@ -208,24 +197,17 @@ def build_text(offer: dict, guide_url: str) -> str:
         [
             "4. Attendi il bonus previsto dalla campagna.",
             "",
-            f"💸 <b>Guadagno reale:</b> {effective_gain}",
             effective_note,
         ]
     )
 
-    if bonus_note:
+    if bonus_note and "chi invita" not in bonus_note.lower():
         lines.extend(["", f"📌 <b>Nota utile:</b> {bonus_note}"])
 
-    lines.extend(
-        [
-            "",
-            f"🛡 <b>Consiglio:</b> {safe_tip}",
-            "",
-            f"🔎 <b>Dati verificati:</b> {verified_at}",
-            "",
-            call_to_action,
-        ]
-    )
+    if support_short:
+        lines.extend(["", f"🤝 <b>Supporto:</b> {support_short} se ti serve per partire."])
+
+    lines.extend(["", call_to_action])
 
     return "\n".join(lines)
 

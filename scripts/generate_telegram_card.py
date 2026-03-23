@@ -93,10 +93,10 @@ def offer_status_label(offer: dict) -> str:
 def offer_support_headline(offer: dict) -> str:
     difficulty = DIFFICULTY_LABELS.get(offer.get("difficulty", ""), offer.get("difficulty", ""))
     if offer.get("bonus_cliente_fixed") and offer.get("difficulty") == "easy":
-        return f"Attivabile in tempi rapidi con procedura {difficulty.lower()}."
+        return f"Guida {difficulty.lower()} per ottenere il bonus senza passaggi inutili."
     if offer.get("bonus_cliente_fixed"):
-        return f"Bonus chiaro per chi vuole seguire una procedura {difficulty.lower()} senza improvvisare."
-    return "Importo variabile: controlla il premio in app e segui la guida passo passo."
+        return f"Bonus chiaro con procedura {difficulty.lower()} da seguire passo passo."
+    return "Importo variabile: controlla il premio in app e completa ogni requisito nell'ordine corretto."
 
 
 def offer_conversion_line(offer: dict) -> str:
@@ -109,6 +109,23 @@ def offer_risk_reversal_line(offer: dict) -> str:
     if offer.get("bonus_cliente_fixed"):
         return "Segui i passaggi in ordine per non perdere il bonus."
     return "Verifica bene importo e requisiti prima di completare i passaggi."
+
+
+def deposit_line(offer: dict) -> str:
+    return offer.get("deposit_required", "Da verificare")
+
+
+def support_line(offer: dict) -> str:
+    return offer.get("support_note", "")
+
+
+def support_banner_text(offer: dict) -> str:
+    short = offer.get("support_short", "").strip()
+    if short:
+        return short
+    if offer.get("bonus_cliente_fixed"):
+        return "Ti aiuto a partire"
+    return "Ti aiuto a verificare"
 
 
 def load_font(weight: str, size: int):
@@ -300,6 +317,9 @@ def render_card(offer: dict, base_url: str, out_path: Path, use_openai_backgroun
     accent = offer.get("visual", {}).get("accent", "#74C947")
     accent_rgb = hex_to_rgb(accent)
     primary_rgb = hex_to_rgb(primary)
+    deposit_required = deposit_line(offer)
+    support_note = support_line(offer)
+    support_banner = support_banner_text(offer)
 
     font_brand = load_font("bold", 30)
     font_bank = load_font("bold", 42)
@@ -312,6 +332,7 @@ def render_card(offer: dict, base_url: str, out_path: Path, use_openai_backgroun
     font_body_small = load_font("regular", 27)
     font_chip = load_font("bold", 26)
     font_small = load_font("regular", 23)
+    font_support = load_font("bold", 24)
 
     draw.rounded_rectangle((54, 48, width - 54, height - 48), radius=46, outline=(255, 255, 255, 44), width=2)
 
@@ -349,48 +370,60 @@ def render_card(offer: dict, base_url: str, out_path: Path, use_openai_backgroun
         draw.text((chip_x + 22, chip_y + 14), chip, font=font_chip, fill=(255, 255, 255))
         chip_x += text_width + chip_spacing
 
-    draw.rounded_rectangle((64, 524, width - 64, 588), radius=24, fill=(*accent_rgb, 232))
+    draw.rounded_rectangle((64, 524, width - 64, 602), radius=24, fill=(255, 255, 255, 240))
     draw_wrapped_text(
         draw,
         (96, 542),
-        offer_risk_reversal_line(offer),
+        f"SPESA / DEPOSITO RICHIESTO: {deposit_required}",
         font_section,
-        (8, 15, 29),
+        primary_rgb,
         width - 192,
         2,
         spacing=4,
     )
 
-    draw.rounded_rectangle((64, 618, width - 64, 972), radius=42, fill=(9, 16, 30, 196))
-    draw.text((96, 650), "3 PASSAGGI DA COMPLETARE", font=font_title, fill=(255, 255, 255))
-    draw.text((96, 700), "Seguili in ordine e non saltare nessun requisito.", font=font_body_small, fill=(200, 211, 226))
+    draw.rounded_rectangle((64, 614, width - 64, 688), radius=24, fill=(*accent_rgb, 235))
+    draw_wrapped_text(
+        draw,
+        (96, 637),
+        support_banner,
+        font_support,
+        (8, 15, 29),
+        width - 192,
+        1,
+        spacing=4,
+    )
 
-    step_y = 782
+    draw.rounded_rectangle((64, 716, width - 64, 1060), radius=42, fill=(9, 16, 30, 196))
+    draw.text((96, 748), "3 PASSAGGI DA COMPLETARE", font=font_title, fill=(255, 255, 255))
+    draw.text((96, 798), "Seguili in ordine e non saltare nessun requisito.", font=font_body_small, fill=(200, 211, 226))
+
+    step_y = 872
     for index, item in enumerate(offer.get("requirements", [])[:3], start=1):
         bubble_x = 114
-        bubble_y = step_y + (index - 1) * 86
+        bubble_y = step_y + (index - 1) * 84
         draw.ellipse((bubble_x - 23, bubble_y - 23, bubble_x + 23, bubble_y + 23), fill=(*accent_rgb, 255))
         draw.text((bubble_x - 10, bubble_y - 18), str(index), font=font_chip, fill=(8, 15, 29))
         draw_wrapped_text(draw, (164, bubble_y - 24), item, font_body, (255, 255, 255), 780, 2, spacing=6)
 
-    chip_top = 1012
+    chip_top = 1092
     chip_width = (width - 64 * 2 - 24 * 2) // 3
     chips = [
         ("Guadagno", offer["effective_gain"]),
-        ("Verifica", format_date(offer["last_verified_at"])),
-        ("Extra", offer.get("bonus_note") or "Guida passo passo"),
+        ("Deposita", offer.get("deposit_short") or deposit_required),
+        ("Supporto", support_banner),
     ]
     for index, (label, value) in enumerate(chips):
         left = 64 + index * (chip_width + 24)
         right = left + chip_width
-        draw.rounded_rectangle((left, chip_top, right, chip_top + 148), radius=32, fill=(255, 255, 255, 232))
+        draw.rounded_rectangle((left, chip_top, right, chip_top + 132), radius=32, fill=(255, 255, 255, 232))
         draw.text((left + 26, chip_top + 24), label.upper(), font=font_small, fill=(67, 79, 100))
         draw_wrapped_text(draw, (left + 26, chip_top + 60), value, font_section, primary_rgb, chip_width - 52, 3, spacing=4)
 
-    draw.rounded_rectangle((64, 1192, width - 64, 1286), radius=36, fill=(*accent_rgb, 255))
-    draw.text((92, 1218), "APRI LA GUIDA E SEGUI I PASSAGGI", font=font_section, fill=(8, 15, 29))
+    draw.rounded_rectangle((64, 1250, width - 64, 1328), radius=36, fill=(*accent_rgb, 255))
+    draw.text((92, 1268), "APRI LA GUIDA E PARTI SUBITO", font=font_support, fill=(8, 15, 29))
     footer = base_url.replace("https://", "").replace("http://", "") if base_url else "Link completo nel post Telegram"
-    draw_wrapped_text(draw, (94, 1250), footer, font_small, (8, 15, 29), width - 188, 1, spacing=4)
+    draw_wrapped_text(draw, (94, 1295), footer, font_small, (8, 15, 29), width - 188, 1, spacing=4)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(out_path, format="PNG")
