@@ -39,12 +39,24 @@ jobs:
 
       - name: Render Telegram message
         run: |
-          python scripts/render_telegram_post.py \
+          python3 scripts/render_telegram_post.py \
             --slug "${{ steps.slug.outputs.value }}" \
             --base-url "${{ secrets.SITE_BASE_URL }}" > telegram-message.txt
+          echo "Messaggio generato:"
+          cat telegram-message.txt
+
+      - name: Check Telegram configuration
+        env:
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "${TELEGRAM_CHAT_ID}" ]; then
+            echo "TELEGRAM_CHAT_ID mancante"
+            exit 1
+          fi
+          echo "TELEGRAM_CHAT_ID configurato."
 
       - name: Send Telegram message
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python scripts/send_telegram.py < telegram-message.txt
+        run: python3 scripts/send_telegram.py < telegram-message.txt

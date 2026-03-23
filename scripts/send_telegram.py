@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -39,8 +40,13 @@ def main() -> int:
         method="POST",
     )
 
-    with urllib.request.urlopen(request, timeout=30) as response:
-        response.read()
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            response.read()
+    except urllib.error.HTTPError as exc:
+        details = exc.read().decode("utf-8", errors="replace")
+        print(f"Errore Telegram API: {exc.code} {details}", file=sys.stderr)
+        return 1
 
     print("Messaggio Telegram inviato.")
     return 0
