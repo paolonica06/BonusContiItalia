@@ -20,7 +20,12 @@
       ],
       "official_url": "https://www.bbva.it/persone/promozioni/passaparola.html",
       "guide_url": "bonus-bbva.html",
-      "last_verified_at": "2026-03-23"
+      "last_verified_at": "2026-03-23",
+      "visual": {
+        "primary": "#123B87",
+        "secondary": "#1BA8FF",
+        "accent": "#74C947"
+      }
     },
     {
       "slug": "buddybank",
@@ -42,7 +47,12 @@
       ],
       "official_url": "https://www.buddy.unicredit.it/conto-genius-buddy-bonus-5050/",
       "guide_url": "bonus-buddybank.html",
-      "last_verified_at": "2026-03-23"
+      "last_verified_at": "2026-03-23",
+      "visual": {
+        "primary": "#111111",
+        "secondary": "#FF5B5B",
+        "accent": "#FFC83D"
+      }
     },
     {
       "slug": "revolut",
@@ -65,7 +75,12 @@
       ],
       "official_url": "https://www.revolut.com/en-IT/legal/referrals-terms/",
       "guide_url": "bonus-revolut.html",
-      "last_verified_at": "2026-03-23"
+      "last_verified_at": "2026-03-23",
+      "visual": {
+        "primary": "#0F172A",
+        "secondary": "#1D4ED8",
+        "accent": "#9AE6B4"
+      }
     },
     {
       "slug": "trade-republic",
@@ -87,7 +102,12 @@
       ],
       "official_url": "https://support.traderepublic.com/it-it/1034-How-can-I-participate-in-the-Refer_a_Friend-program",
       "guide_url": "bonus-trade-republic.html",
-      "last_verified_at": "2026-03-23"
+      "last_verified_at": "2026-03-23",
+      "visual": {
+        "primary": "#0F1115",
+        "secondary": "#18C37E",
+        "accent": "#B5F767"
+      }
     }
   ]
 }

@@ -10,10 +10,12 @@ Questo file e il punto di partenza per automatizzare il progetto senza rompere i
   Config generale del sito e delle pubblicazioni.
 - `scripts/render_telegram_post.py`
   Genera un messaggio Telegram per una promo partendo dai dati centrali.
+- `scripts/generate_telegram_card.py`
+  Genera una card promo per Telegram. Se `OPENAI_API_KEY` e disponibile, puo usare uno sfondo AI; altrimenti usa un layout locale elegante.
 - `scripts/send_telegram.py`
-  Invia un messaggio su Telegram usando il bot token e il chat id.
+  Invia un messaggio su Telegram usando il bot token e il chat id, con supporto a testo o foto + caption + pulsanti.
 - `.github/workflows/telegram-offer.yml`
-  Workflow GitHub Actions che puo essere lanciato a mano o a orario.
+  Workflow GitHub Actions che puo essere lanciato a mano o a orario, ruota automaticamente le offerte e genera anche l'immagine promo.
 - `scripts/build_blog_draft.py`
   Genera bozze blog periodiche dalle offerte, con o senza OpenAI.
 - `.github/workflows/blog-weekly.yml`
@@ -39,6 +41,9 @@ Posso continuare io con uno o piu di questi blocchi:
 
 5. preparare la factory per video verticali
    Posso creare script che generano hook, caption, script e testo overlay.
+
+6. rafforzare il sistema immagini
+   Posso aggiungere varianti grafiche, sfondi AI piu forti o template diversi per conto, app e investimenti.
 
 ## Cosa devi fare tu per forza
 
@@ -104,6 +109,8 @@ Se vuoi bozze blog generate da IA con testo piu naturale:
 
 Se questo secret manca, la generazione blog continua a funzionare in modalita template.
 
+Lo stesso secret viene usato anche per gli sfondi immagine AI dei post Telegram. Se manca, il canale continua comunque a pubblicare le card con il design locale.
+
 ## Comandi locali utili
 
 Genera un messaggio Telegram per BBVA:
@@ -116,6 +123,12 @@ Invia un messaggio Telegram:
 
 ```bash
 python3 scripts/render_telegram_post.py --slug bbva --base-url https://tuodominio.it | python3 scripts/send_telegram.py
+```
+
+Genera una card promo Telegram:
+
+```bash
+python3 scripts/generate_telegram_card.py --slug bbva --base-url https://tuodominio.it --out tmp/telegram/bbva-card.png
 ```
 
 Genera una bozza blog template per una singola offerta:

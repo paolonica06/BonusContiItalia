@@ -3,11 +3,47 @@
 from __future__ import annotations
 
 import json
+import mimetypes
 import os
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
+from pathlib import Path
+
+
+def build_multipart_payload(fields: dict[str, str], files: dict[str, Path]) -> tuple[bytes, str]:
+    boundary = f"----CodexTelegram{uuid.uuid4().hex}"
+    chunks: list[bytes] = []
+
+    for name, value in fields.items():
+        chunks.extend(
+            [
+                f"--{boundary}\r\n".encode("utf-8"),
+                f'Content-Disposition: form-data; name="{name}"\r\n\r\n'.encode("utf-8"),
+                str(value).encode("utf-8"),
+                b"\r\n",
+            ]
+        )
+
+    for name, path in files.items():
+        mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        chunks.extend(
+            [
+                f"--{boundary}\r\n".encode("utf-8"),
+                (
+                    f'Content-Disposition: form-data; name="{name}"; '
+                    f'filename="{path.name}"\r\n'
+                ).encode("utf-8"),
+                f"Content-Type: {mime_type}\r\n\r\n".encode("utf-8"),
+                path.read_bytes(),
+                b"\r\n",
+            ]
+        )
+
+    chunks.append(f"--{boundary}--\r\n".encode("utf-8"))
+    return b"".join(chunks), boundary
 
 
 def main() -> int:
@@ -56,13 +92,37 @@ def main() -> int:
     if message_payload.get("reply_markup"):
         request_payload["reply_markup"] = json.dumps(message_payload["reply_markup"], ensure_ascii=False)
 
-    payload = urllib.parse.urlencode(request_payload).encode("utf-8")
+    photo_path = message_payload.get("photo_path")
+    if photo_path:
+        path = Path(photo_path)
+        if not path.exists():
+            print(f"Immagine Telegram non trovata: {path}", file=sys.stderr)
+            return 1
 
-    request = urllib.request.Request(
-        f"https://api.telegram.org/bot{token}/sendMessage",
-        data=payload,
-        method="POST",
-    )
+        payload = {
+            "chat_id": chat_id,
+            "caption": message_payload["text"],
+        }
+        if message_payload.get("parse_mode"):
+            payload["parse_mode"] = message_payload["parse_mode"]
+        if message_payload.get("reply_markup"):
+            payload["reply_markup"] = json.dumps(message_payload["reply_markup"], ensure_ascii=False)
+
+        multipart_body, boundary = build_multipart_payload(payload, {"photo": path})
+        request = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendPhoto",
+            data=multipart_body,
+            headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+            method="POST",
+        )
+    else:
+        payload = urllib.parse.urlencode(request_payload).encode("utf-8")
+
+        request = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=payload,
+            method="POST",
+        )
 
     try:
         with urllib.request.urlopen(request, timeout=30) as response:

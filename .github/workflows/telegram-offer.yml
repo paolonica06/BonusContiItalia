@@ -20,6 +20,9 @@ on:
 jobs:
   telegram-update:
     runs-on: ubuntu-latest
+    env:
+      OPENAI_IMAGE_MODEL: gpt-image-1-mini
+      OPENAI_IMAGE_QUALITY: low
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -28,6 +31,9 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --upgrade pip openai pillow
 
       - name: Pick offer slug
         id: slug
@@ -56,6 +62,51 @@ jobs:
           print("Pulsanti:")
           for row in payload.get("reply_markup", {}).get("inline_keyboard", []):
               print(" | ".join(button.get("text", "") for button in row))
+          PY
+
+      - name: Extract selected offer slug
+        id: selected
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = json.loads(Path("telegram-message.json").read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+              handle.write(f"slug={payload['slug']}\n")
+          PY
+
+      - name: Generate promo image
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -n "${OPENAI_API_KEY}" ]; then
+            python3 scripts/generate_telegram_card.py \
+              --slug "${{ steps.selected.outputs.slug }}" \
+              --base-url "${SITE_BASE_URL}" \
+              --out tmp/telegram/promo-card.png \
+              --use-openai-background \
+              --openai-model "${OPENAI_IMAGE_MODEL}" \
+              --openai-quality "${OPENAI_IMAGE_QUALITY}"
+          else
+            python3 scripts/generate_telegram_card.py \
+              --slug "${{ steps.selected.outputs.slug }}" \
+              --base-url "${SITE_BASE_URL}" \
+              --out tmp/telegram/promo-card.png
+          fi
+
+      - name: Attach promo image to Telegram payload
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload_path = Path("telegram-message.json")
+          payload = json.loads(payload_path.read_text(encoding="utf-8"))
+          payload["photo_path"] = "tmp/telegram/promo-card.png"
+          payload_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
           PY
 
       - name: Check Telegram configuration
