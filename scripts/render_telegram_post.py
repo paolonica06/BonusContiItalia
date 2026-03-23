@@ -102,10 +102,16 @@ def business_day_offset(anchor: dt.date, today: dt.date) -> int:
     return business_days
 
 
-def pick_rotating_offer(payload: dict, site_config: dict, today: dt.date) -> dict:
+def pick_rotating_offer(
+    payload: dict, site_config: dict, today: dt.date, rotation_index: int | None = None
+) -> dict:
     offers = active_offers(payload, site_config)
     if not offers:
         raise SystemExit("Nessuna offerta attiva disponibile per la rotazione.")
+
+    if rotation_index is not None:
+        index = rotation_index % len(offers)
+        return offers[index]
 
     anchor_raw = site_config.get("telegram", {}).get("rotation_anchor_date", "")
     try:
@@ -253,6 +259,12 @@ def parse_args() -> argparse.Namespace:
         default="",
         help="Data di riferimento in formato YYYY-MM-DD, utile per testare la rotazione.",
     )
+    parser.add_argument(
+        "--rotation-index",
+        type=int,
+        default=None,
+        help="Indice numerico opzionale per forzare la rotazione, utile nei workflow automatici.",
+    )
     return parser.parse_args()
 
 
@@ -264,7 +276,7 @@ def main() -> int:
     today = dt.date.fromisoformat(args.today) if args.today else dt.date.today()
 
     if args.slug == "auto":
-        offer = pick_rotating_offer(payload, site_config, today)
+        offer = pick_rotating_offer(payload, site_config, today, args.rotation_index)
     else:
         offer = find_offer(args.slug, payload)
 

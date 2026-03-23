@@ -46,9 +46,14 @@ jobs:
 
       - name: Render Telegram message
         run: |
+          ROTATION_ARGS=""
+          if [ "${{ steps.slug.outputs.value }}" = "auto" ]; then
+            ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
+          fi
           python3 scripts/render_telegram_post.py \
             --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${{ secrets.SITE_BASE_URL }}" > telegram-message.json
+            --base-url "${{ secrets.SITE_BASE_URL }}" \
+            ${ROTATION_ARGS} > telegram-message.json
           echo "Messaggio generato:"
           python3 - <<'PY'
           import json
