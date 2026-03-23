@@ -8,7 +8,14 @@
   "telegram": {
     "enabled": true,
     "channel_name": "@bonuscontiitalia",
-    "posting_mode": "manual_approval"
+    "posting_mode": "manual_approval",
+    "rotation_anchor_date": "2026-03-23"
+  },
+  "socials": {
+    "telegram_url": "https://t.me/bonuscontiitalia",
+    "instagram_url": "",
+    "tiktok_url": "",
+    "youtube_url": ""
   },
   "content": {
     "primary_offers": [

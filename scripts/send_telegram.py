@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import urllib.error
@@ -29,18 +30,33 @@ def main() -> int:
         print("Passa il testo del messaggio via stdin.", file=sys.stderr)
         return 1
 
-    message = sys.stdin.read().strip()
-    if not message:
+    raw_input = sys.stdin.read().strip()
+    if not raw_input:
         print("Messaggio vuoto.", file=sys.stderr)
         return 1
 
-    payload = urllib.parse.urlencode(
-        {
-            "chat_id": chat_id,
-            "text": message,
-            "disable_web_page_preview": "false",
-        }
-    ).encode("utf-8")
+    try:
+        message_payload = json.loads(raw_input)
+    except json.JSONDecodeError:
+        message_payload = {"text": raw_input}
+
+    if not isinstance(message_payload, dict) or not message_payload.get("text"):
+        print("Payload Telegram non valido.", file=sys.stderr)
+        return 1
+
+    request_payload = {
+        "chat_id": chat_id,
+        "text": message_payload["text"],
+        "disable_web_page_preview": str(message_payload.get("disable_web_page_preview", False)).lower(),
+    }
+
+    if message_payload.get("parse_mode"):
+        request_payload["parse_mode"] = message_payload["parse_mode"]
+
+    if message_payload.get("reply_markup"):
+        request_payload["reply_markup"] = json.dumps(message_payload["reply_markup"], ensure_ascii=False)
+
+    payload = urllib.parse.urlencode(request_payload).encode("utf-8")
 
     request = urllib.request.Request(
         f"https://api.telegram.org/bot{token}/sendMessage",

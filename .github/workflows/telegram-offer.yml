@@ -6,9 +6,10 @@ on:
       slug:
         description: "Slug dell'offerta da pubblicare"
         required: true
-        default: "bbva"
+        default: "auto"
         type: choice
         options:
+          - auto
           - bbva
           - buddybank
           - revolut
@@ -34,16 +35,28 @@ jobs:
           if [ -n "${{ github.event.inputs.slug }}" ]; then
             echo "value=${{ github.event.inputs.slug }}" >> "$GITHUB_OUTPUT"
           else
-            echo "value=bbva" >> "$GITHUB_OUTPUT"
+            echo "value=auto" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Render Telegram message
         run: |
           python3 scripts/render_telegram_post.py \
             --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${{ secrets.SITE_BASE_URL }}" > telegram-message.txt
+            --base-url "${{ secrets.SITE_BASE_URL }}" > telegram-message.json
           echo "Messaggio generato:"
-          cat telegram-message.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("telegram-message.json").read_text(encoding="utf-8"))
+          print(f"Offerta selezionata: {payload.get('offer_name')} ({payload.get('slug')})")
+          print("")
+          print(payload.get("text", ""))
+          print("")
+          print("Pulsanti:")
+          for row in payload.get("reply_markup", {}).get("inline_keyboard", []):
+              print(" | ".join(button.get("text", "") for button in row))
+          PY
 
       - name: Check Telegram configuration
         env:
@@ -59,4 +72,4 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python3 scripts/send_telegram.py < telegram-message.txt
+        run: python3 scripts/send_telegram.py < telegram-message.json
