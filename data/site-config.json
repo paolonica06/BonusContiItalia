@@ -7,7 +7,7 @@
   },
   "telegram": {
     "enabled": true,
-    "channel_name": "@examplechannel",
+    "channel_name": "@bonuscontiitalia",
     "posting_mode": "manual_approval"
   },
   "content": {
