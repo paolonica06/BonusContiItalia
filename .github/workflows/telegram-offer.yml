@@ -1,0 +1,50 @@
+name: Telegram Offer Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Slug dell'offerta da pubblicare"
+        required: true
+        default: "bbva"
+        type: choice
+        options:
+          - bbva
+          - buddybank
+          - revolut
+          - trade-republic
+  schedule:
+    - cron: "30 8 * * 1-5"
+
+jobs:
+  telegram-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Pick offer slug
+        id: slug
+        run: |
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            echo "value=${{ github.event.inputs.slug }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=bbva" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Render Telegram message
+        run: |
+          python scripts/render_telegram_post.py \
+            --slug "${{ steps.slug.outputs.value }}" \
+            --base-url "${{ secrets.SITE_BASE_URL }}" > telegram-message.txt
+
+      - name: Send Telegram message
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/send_telegram.py < telegram-message.txt

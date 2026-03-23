@@ -1,0 +1,93 @@
+{
+  "offers": [
+    {
+      "slug": "bbva",
+      "name": "BBVA",
+      "status": "active",
+      "category": "conto",
+      "bonus_cliente": "10€",
+      "bonus_cliente_value": 10,
+      "bonus_cliente_fixed": true,
+      "bonus_note": "20€ per chi invita",
+      "effective_gain": "10€ pieni",
+      "effective_gain_note": "Serve almeno un acquisto valido con carta entro 90 giorni.",
+      "difficulty": "easy",
+      "estimated_time": "5 minuti",
+      "requirements": [
+        "Nuovo cliente BBVA",
+        "Apertura conto",
+        "Primo acquisto con carta entro 90 giorni"
+      ],
+      "official_url": "https://www.bbva.it/persone/promozioni/passaparola.html",
+      "guide_url": "bonus-bbva.html",
+      "last_verified_at": "2026-03-23"
+    },
+    {
+      "slug": "buddybank",
+      "name": "buddybank / buddy UniCredit",
+      "status": "active",
+      "category": "conto",
+      "bonus_cliente": "50€",
+      "bonus_cliente_value": 50,
+      "bonus_cliente_fixed": true,
+      "bonus_note": "Promo buddy Club 100 valida fino al 20 luglio 2026",
+      "effective_gain": "Fino a 50€",
+      "effective_gain_note": "Con carta digitale il bonus resta pieno; la carta fisica puo avere costi di emissione e spedizione.",
+      "difficulty": "easy",
+      "estimated_time": "5-10 minuti",
+      "requirements": [
+        "Nuovo cliente e residente in Italia",
+        "Codice invito in apertura",
+        "Una o piu transazioni per almeno 10€ entro 30 giorni"
+      ],
+      "official_url": "https://www.buddy.unicredit.it/conto-genius-buddy-bonus-5050/",
+      "guide_url": "bonus-buddybank.html",
+      "last_verified_at": "2026-03-23"
+    },
+    {
+      "slug": "revolut",
+      "name": "Revolut",
+      "status": "active",
+      "category": "app",
+      "bonus_cliente": "Variabile",
+      "bonus_cliente_value": null,
+      "bonus_cliente_fixed": false,
+      "bonus_note": "Il premio standard viene definito nella schermata inviti dell'app",
+      "effective_gain": "Da verificare in app",
+      "effective_gain_note": "I termini consultati non pubblicano un importo cash fisso per il nuovo cliente.",
+      "difficulty": "medium",
+      "estimated_time": "10-15 minuti",
+      "requirements": [
+        "Registrazione dal link corretto",
+        "Verifica identita",
+        "Ricarica da fonte esterna",
+        "Carta fisica e pagamenti validi se richiesti"
+      ],
+      "official_url": "https://www.revolut.com/en-IT/legal/referrals-terms/",
+      "guide_url": "bonus-revolut.html",
+      "last_verified_at": "2026-03-23"
+    },
+    {
+      "slug": "trade-republic",
+      "name": "Trade Republic",
+      "status": "active",
+      "category": "investimento",
+      "bonus_cliente": "Variabile",
+      "bonus_cliente_value": null,
+      "bonus_cliente_fixed": false,
+      "bonus_note": "Premio personalizzato in base alla campagna attiva",
+      "effective_gain": "Da verificare",
+      "effective_gain_note": "Il valore dipende dalle condizioni mostrate nell'app e dalla campagna attiva.",
+      "difficulty": "hard",
+      "estimated_time": "10-15 minuti",
+      "requirements": [
+        "Registrazione dal link corretto",
+        "Verifica identita",
+        "Prima operazione valida prevista dalla campagna"
+      ],
+      "official_url": "https://support.traderepublic.com/it-it/1034-How-can-I-participate-in-the-Refer_a_Friend-program",
+      "guide_url": "bonus-trade-republic.html",
+      "last_verified_at": "2026-03-23"
+    }
+  ]
+}

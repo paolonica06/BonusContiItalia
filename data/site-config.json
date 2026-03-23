@@ -1,0 +1,21 @@
+{
+  "site": {
+    "name": "Bonus Conti Italia",
+    "base_url": "https://example.com",
+    "locale": "it-IT",
+    "timezone": "Europe/Rome"
+  },
+  "telegram": {
+    "enabled": true,
+    "channel_name": "@examplechannel",
+    "posting_mode": "manual_approval"
+  },
+  "content": {
+    "primary_offers": [
+      "bbva",
+      "buddybank",
+      "revolut",
+      "trade-republic"
+    ]
+  }
+}

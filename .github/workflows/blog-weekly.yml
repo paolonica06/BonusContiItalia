@@ -1,0 +1,110 @@
+name: Blog Draft Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Tipo di bozza da generare"
+        required: true
+        default: "roundup"
+        type: choice
+        options:
+          - roundup
+          - offer
+      slug:
+        description: "Slug offerta, richiesto solo se mode=offer"
+        required: false
+        default: "bbva"
+        type: choice
+        options:
+          - bbva
+          - buddybank
+          - revolut
+          - trade-republic
+      use_openai:
+        description: "Usa OpenAI per il testo"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "15 9 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-blog-draft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Pick mode
+        id: mode
+        run: |
+          if [ -n "${{ github.event.inputs.mode }}" ]; then
+            echo "value=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=roundup" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pick slug
+        id: slug
+        run: |
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            echo "value=${{ github.event.inputs.slug }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=bbva" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build template draft
+        if: ${{ github.event.inputs.use_openai != 'true' }}
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: |
+          if [ "${{ steps.mode.outputs.value }}" = "offer" ]; then
+            python3 scripts/build_blog_draft.py \
+              --mode offer \
+              --slug "${{ steps.slug.outputs.value }}" \
+              --base-url "${SITE_BASE_URL}"
+          else
+            python3 scripts/build_blog_draft.py \
+              --mode roundup \
+              --base-url "${SITE_BASE_URL}"
+          fi
+
+      - name: Build AI draft
+        if: ${{ github.event.inputs.use_openai == 'true' }}
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ "${{ steps.mode.outputs.value }}" = "offer" ]; then
+            python3 scripts/build_blog_draft.py \
+              --mode offer \
+              --slug "${{ steps.slug.outputs.value }}" \
+              --base-url "${SITE_BASE_URL}" \
+              --use-openai
+          else
+            python3 scripts/build_blog_draft.py \
+              --mode roundup \
+              --base-url "${SITE_BASE_URL}" \
+              --use-openai
+          fi
+
+      - name: Commit generated draft
+        run: |
+          git add content/blog/drafts
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da salvare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Add automated blog draft"
+          git push

@@ -1,0 +1,170 @@
+# Automazioni Bonus Conti Italia
+
+Questo file e il punto di partenza per automatizzare il progetto senza rompere il sito statico che hai gia online.
+
+## Cosa ho impostato
+
+- `data/offers.json`
+  Un file unico con le offerte principali e i campi piu utili per automazioni, Telegram, blog e confronto offerte.
+- `data/site-config.json`
+  Config generale del sito e delle pubblicazioni.
+- `scripts/render_telegram_post.py`
+  Genera un messaggio Telegram per una promo partendo dai dati centrali.
+- `scripts/send_telegram.py`
+  Invia un messaggio su Telegram usando il bot token e il chat id.
+- `.github/workflows/telegram-offer.yml`
+  Workflow GitHub Actions che puo essere lanciato a mano o a orario.
+- `scripts/build_blog_draft.py`
+  Genera bozze blog periodiche dalle offerte, con o senza OpenAI.
+- `.github/workflows/blog-weekly.yml`
+  Workflow GitHub Actions che crea una bozza blog schedulata o manuale.
+- `.env.example`
+  Elenco chiaro dei segreti che dovrai configurare.
+
+## Cosa posso fare io nel prossimo step
+
+Posso continuare io con uno o piu di questi blocchi:
+
+1. rendere il sito data-driven
+   In pratica: home, tabella confronto e guide vengono generate da `data/offers.json`.
+
+2. automatizzare gli aggiornamenti del sito
+   Creo script e workflow che aggiornano pagine, ricostruiscono il sito e fanno deploy automatico.
+
+3. automatizzare Telegram
+   Posso trasformare il workflow attuale in un sistema reale di alert, update promo e annunci canale.
+
+4. creare la base del blog automatico
+   Posso generare bozze articoli dai dati delle offerte.
+
+5. preparare la factory per video verticali
+   Posso creare script che generano hook, caption, script e testo overlay.
+
+## Cosa devi fare tu per forza
+
+Questi passaggi richiedono account, token o autorizzazioni esterne. Qui sotto li trovi in ordine.
+
+### 1. Telegram bot
+
+1. Apri Telegram.
+2. Cerca `@BotFather`.
+3. Scrivi `/newbot`.
+4. Scegli nome e username del bot.
+5. Copia il token finale.
+
+Poi:
+
+1. Crea o apri il tuo canale Telegram.
+2. Aggiungi il bot come admin del canale.
+3. Recupera il `chat_id` del canale o gruppo dove vuoi pubblicare.
+
+Segreti da salvare:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+
+### 2. GitHub Secrets
+
+Nel repository GitHub:
+
+1. Vai su `Settings`
+2. Vai su `Secrets and variables`
+3. Vai su `Actions`
+4. Crea questi secrets:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+- `SITE_BASE_URL`
+
+### 3. Dominio del sito
+
+Quando avrai il dominio definitivo, inseriscilo:
+
+- in `data/site-config.json`
+- nel secret `SITE_BASE_URL`
+
+### 4. Vercel
+
+Se vuoi deploy automatico:
+
+1. collega il repo a Vercel
+2. crea un deploy hook
+3. salva il valore come:
+
+- `VERCEL_DEPLOY_HOOK_URL`
+
+### 5. OpenAI per articoli piu naturali
+
+Se vuoi bozze blog generate da IA con testo piu naturale:
+
+1. crea una API key OpenAI
+2. salvala nei GitHub Secrets come:
+
+- `OPENAI_API_KEY`
+
+Se questo secret manca, la generazione blog continua a funzionare in modalita template.
+
+## Comandi locali utili
+
+Genera un messaggio Telegram per BBVA:
+
+```bash
+python3 scripts/render_telegram_post.py --slug bbva --base-url https://tuodominio.it
+```
+
+Invia un messaggio Telegram:
+
+```bash
+python3 scripts/render_telegram_post.py --slug bbva --base-url https://tuodominio.it | python3 scripts/send_telegram.py
+```
+
+Genera una bozza blog template per una singola offerta:
+
+```bash
+python3 scripts/build_blog_draft.py --mode offer --slug bbva --base-url https://tuodominio.it
+```
+
+Genera una bozza blog riepilogativa:
+
+```bash
+python3 scripts/build_blog_draft.py --mode roundup --base-url https://tuodominio.it
+```
+
+Genera una bozza blog con OpenAI:
+
+```bash
+OPENAI_API_KEY=... python3 scripts/build_blog_draft.py --mode roundup --base-url https://tuodominio.it --use-openai
+```
+
+## Workflow blog pronto all'uso
+
+- Ogni lunedi GitHub Actions genera automaticamente una bozza `roundup` in `content/blog/drafts/`.
+- Da `Actions -> Blog Draft Generator` puoi anche lanciare a mano:
+  - una bozza riepilogativa
+  - una bozza per una singola offerta
+  - una bozza con OpenAI, se hai configurato `OPENAI_API_KEY`
+
+## Roadmap consigliata
+
+### Fase 1
+
+- Telegram automatico
+- dati centrali offerte
+- workflow GitHub base
+- blog automatico base
+
+### Fase 2
+
+- sito generato da dati
+- deploy automatico
+- alert su cambi promo
+
+### Fase 3
+
+- bozze blog automatiche
+- script video e caption
+
+### Fase 4
+
+- pubblicazione semi-automatica video/social
+- controllo promo con parser e diff
