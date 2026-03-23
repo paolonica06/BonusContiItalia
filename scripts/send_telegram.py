@@ -10,11 +10,19 @@ import urllib.request
 
 
 def main() -> int:
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    token = (os.getenv("TELEGRAM_BOT_TOKEN") or "").strip()
+    chat_id = (os.getenv("TELEGRAM_CHAT_ID") or "").strip()
 
     if not token or not chat_id:
         print("Mancano TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID.", file=sys.stderr)
+        return 1
+
+    if any(char.isspace() for char in token):
+        print("TELEGRAM_BOT_TOKEN non valido: contiene spazi o ritorni a capo.", file=sys.stderr)
+        return 1
+
+    if any(char.isspace() for char in chat_id):
+        print("TELEGRAM_CHAT_ID non valido: contiene spazi o ritorni a capo.", file=sys.stderr)
         return 1
 
     if sys.stdin.isatty():
