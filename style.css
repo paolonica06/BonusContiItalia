@@ -602,6 +602,28 @@ ol {
   min-width: 260px;
 }
 
+.table-brand-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 18px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.table-brand-link:hover {
+  transform: translateY(-1px);
+  opacity: 0.98;
+}
+
+.table-brand-link:focus-visible {
+  outline: 3px solid rgba(31, 143, 255, 0.28);
+  outline-offset: 4px;
+}
+
+.table-brand-link:hover .table-brand strong {
+  color: var(--gold-strong);
+}
+
 .table-brand .offer-logo {
   width: 116px;
   height: 34px;
