@@ -134,8 +134,9 @@ ol {
 .brand-mark {
   width: clamp(160px, 20vw, 230px);
   height: auto;
-  border-radius: 18px;
-  box-shadow: 0 10px 22px rgba(9, 23, 42, 0.24);
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 10px 22px rgba(9, 23, 42, 0.24));
 }
 
 .brand-copy {
@@ -466,6 +467,9 @@ ol {
 }
 
 .hero-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 18px;
   border-radius: 28px;
   background: linear-gradient(135deg, rgba(16, 43, 80, 0.98), rgba(23, 58, 104, 0.92));
@@ -473,8 +477,8 @@ ol {
 }
 
 .hero-logo {
-  width: 100%;
-  border-radius: 22px;
+  width: min(100%, 520px);
+  margin: 0 auto;
 }
 
 .logo-cloud {
@@ -485,6 +489,7 @@ ol {
 
 .logo-chip {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 96px;
@@ -493,6 +498,14 @@ ol {
   border: 1px solid rgba(16, 43, 80, 0.1);
   background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow-md);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.logo-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 43, 80, 0.18);
+  box-shadow: 0 20px 38px rgba(16, 43, 80, 0.16);
 }
 
 .logo-chip img {
@@ -501,16 +514,30 @@ ol {
   object-fit: contain;
 }
 
+.logo-chip .logo-square {
+  width: 42px;
+  height: 42px;
+  max-height: none;
+}
+
 .logo-chip span {
+  margin-top: 12px;
   font-family: "Trebuchet MS", Verdana, sans-serif;
   font-weight: 700;
   color: var(--accent);
+  font-size: 0.92rem;
+  text-align: center;
 }
 
 .offer-logo {
   width: auto;
   height: 34px;
   object-fit: contain;
+}
+
+.offer-logo-square {
+  width: 44px;
+  height: 44px;
 }
 
 .offer-card {
@@ -580,6 +607,12 @@ ol {
   height: 34px;
   object-fit: contain;
   object-position: left center;
+}
+
+.table-brand .offer-logo-square {
+  width: 44px;
+  height: 44px;
+  object-position: center;
 }
 
 .table-brand strong {
@@ -709,6 +742,15 @@ ol {
   width: auto;
   object-fit: contain;
   margin-bottom: 16px;
+}
+
+.guide-brand-logo-buddy {
+  width: 64px;
+  height: 64px;
+}
+
+.buddy-original-logo {
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .source-box {
@@ -1107,6 +1149,24 @@ footer {
 
   .brand-mark {
     width: min(100%, 240px);
+  }
+
+  .logo-cloud {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .logo-chip {
+    min-height: 118px;
+    padding: 16px 14px;
+  }
+
+  .logo-chip img {
+    max-height: 34px;
+  }
+
+  .logo-chip .logo-square {
+    width: 40px;
+    height: 40px;
   }
 
   .hero-panel,
