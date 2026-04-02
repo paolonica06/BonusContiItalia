@@ -207,6 +207,13 @@ ol {
   padding: 17px 28px;
 }
 
+.button-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  display: block;
+}
+
 .hero {
   margin-top: 22px;
   padding: 52px;
