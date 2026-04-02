@@ -20,6 +20,10 @@ Questo file e il punto di partenza per automatizzare il progetto senza rompere i
   Genera bozze blog periodiche dalle offerte, con o senza OpenAI.
 - `.github/workflows/blog-weekly.yml`
   Workflow GitHub Actions che crea una bozza blog schedulata o manuale.
+- `scripts/build_content_pack.py`
+  Genera pacchetti contenuto per Telegram, video verticali, caption social, idee blog, CTA, overlay copy e risposte rapide DM.
+- `.github/workflows/content-machine.yml`
+  Workflow GitHub Actions che crea in automatico pacchetti contenuto nei giorni lavorativi.
 - `.env.example`
   Elenco chiaro dei segreti che dovrai configurare.
 
@@ -149,6 +153,30 @@ Genera una bozza blog con OpenAI:
 OPENAI_API_KEY=... python3 scripts/build_blog_draft.py --mode roundup --base-url https://tuodominio.it --use-openai
 ```
 
+Genera un content pack template per l'offerta del giorno:
+
+```bash
+python3 scripts/build_content_pack.py --mode offer --slug auto --base-url https://tuodominio.it
+```
+
+Genera un content pack per Revolut:
+
+```bash
+python3 scripts/build_content_pack.py --mode offer --slug revolut --base-url https://tuodominio.it
+```
+
+Genera un piano contenuti settimanale:
+
+```bash
+python3 scripts/build_content_pack.py --mode weekly --base-url https://tuodominio.it
+```
+
+Genera un content pack con OpenAI:
+
+```bash
+OPENAI_API_KEY=... python3 scripts/build_content_pack.py --mode offer --slug bbva --base-url https://tuodominio.it --use-openai
+```
+
 ## Workflow blog pronto all'uso
 
 - Ogni lunedi GitHub Actions genera automaticamente una bozza `roundup` in `content/blog/drafts/`.
@@ -156,6 +184,15 @@ OPENAI_API_KEY=... python3 scripts/build_blog_draft.py --mode roundup --base-url
   - una bozza riepilogativa
   - una bozza per una singola offerta
   - una bozza con OpenAI, se hai configurato `OPENAI_API_KEY`
+
+## Workflow contenuti pronto all'uso
+
+- Ogni giorno lavorativo GitHub Actions genera automaticamente un content pack in `content/machine/packs/`.
+- Da `Actions -> Content Machine` puoi anche lanciare a mano:
+  - un pack per una specifica offerta
+  - un pack automatico dell'offerta del giorno
+  - un piano editoriale settimanale
+  - una versione con OpenAI, se hai configurato `OPENAI_API_KEY`
 
 ## Roadmap consigliata
 
