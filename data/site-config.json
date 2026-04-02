@@ -26,5 +26,11 @@
       "revolut",
       "trade-republic"
     ]
+  },
+  "analytics": {
+    "debug": false,
+    "ga4_measurement_id": "G-DHZ0F1SBNW",
+    "preferred_provider": "ga4",
+    "notes": "Inserisci qui il Measurement ID di Google Analytics 4 per attivare il tracciamento automatico dei click. Se in futuro userai Plausible, puoi lasciare attivo lo stesso file analytics.js e aggiungere il loro snippet ufficiale nelle pagine."
   }
 }
