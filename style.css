@@ -186,6 +186,7 @@ ol {
   text-decoration: none;
   font-family: "Trebuchet MS", Verdana, sans-serif;
   font-weight: 700;
+  line-height: 1.1;
   transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
@@ -198,9 +199,27 @@ ol {
 .cta.secondary,
 .button-link.secondary,
 .cta.ghost {
+  background: rgba(16, 43, 80, 0.06);
+  color: var(--accent);
+  border-color: rgba(16, 43, 80, 0.14);
+}
+
+.cta.secondary:hover,
+.button-link.secondary:hover,
+.cta.ghost:hover {
+  background: rgba(16, 43, 80, 0.1);
+  border-color: rgba(16, 43, 80, 0.22);
+}
+
+.nav-shell .cta.secondary {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
   border-color: rgba(255, 255, 255, 0.14);
+}
+
+.nav-shell .cta.secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .cta.big {
@@ -212,6 +231,20 @@ ol {
   height: 18px;
   flex: 0 0 18px;
   display: block;
+  align-self: center;
+  object-fit: contain;
+}
+
+.channel-cta {
+  background: linear-gradient(135deg, #2aabee, #178ed1);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 12px 26px rgba(42, 171, 238, 0.22);
+}
+
+.channel-cta:hover {
+  background: linear-gradient(135deg, #229fdf, #117ebd);
+  border-color: transparent;
 }
 
 .hero {
@@ -730,6 +763,22 @@ ol {
   padding: 28px;
 }
 
+.social-spotlight {
+  background:
+    radial-gradient(circle at top right, rgba(42, 171, 238, 0.18), transparent 34%),
+    linear-gradient(160deg, rgba(239, 249, 255, 0.98), rgba(255, 255, 255, 0.96));
+  border-color: rgba(42, 171, 238, 0.26);
+  box-shadow: 0 20px 44px rgba(42, 171, 238, 0.16);
+}
+
+.social-spotlight .eyebrow {
+  color: #1280bf;
+}
+
+.social-spotlight span {
+  color: #1280bf;
+}
+
 .step-number,
 .stat-value {
   display: inline-flex;
@@ -917,7 +966,10 @@ ol {
 }
 
 .sticky-cta a {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   flex: 1 1 180px;
   text-align: center;
   color: #fff;
