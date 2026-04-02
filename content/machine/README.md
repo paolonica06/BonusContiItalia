@@ -10,6 +10,8 @@ Questa cartella contiene i pacchetti contenuto generati automaticamente dalle of
   Piani editoriali settimanali.
 - `verticals/`
   Script verticali gia divisi in varianti hook, overlay, CTA e caption.
+- `daily/`
+  Pacchetti giornalieri completi con card, messaggio Telegram, script verticali, caption e brief.
 
 ## Output tipici
 
@@ -29,6 +31,8 @@ Ogni content pack include:
 - brief visual per card o cover
 
 Gli script dentro `verticals/` includono invece varianti gia pronte per Reel, TikTok o Shorts.
+
+La cartella `daily/` e il punto piu comodo da usare ogni giorno: dentro trovi un pacchetto unico gia pronto da pubblicare.
 
 ## Modalita operative
 

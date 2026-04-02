@@ -23,11 +23,15 @@ Questo file e il punto di partenza per automatizzare il progetto senza rompere i
 - `scripts/build_content_pack.py`
   Genera pacchetti contenuto per Telegram, video verticali, caption social, idee blog, CTA, overlay copy e risposte rapide DM.
 - `.github/workflows/content-machine.yml`
-  Workflow GitHub Actions che crea in automatico pacchetti contenuto nei giorni lavorativi.
+  Workflow GitHub Actions per generare manualmente pacchetti contenuto e piani editoriali.
 - `scripts/build_vertical_scripts.py`
   Genera script verticali separati per Reel, TikTok o Shorts con hook, parlato, overlay, CTA e caption.
 - `.github/workflows/vertical-machine.yml`
-  Workflow GitHub Actions che crea in automatico script verticali dedicati.
+  Workflow GitHub Actions per generare manualmente script verticali dedicati.
+- `scripts/build_daily_content_package.py`
+  Genera un pacchetto giornaliero completo con content pack, script verticali, messaggio Telegram, card promo e caption social.
+- `.github/workflows/daily-content-factory.yml`
+  Workflow GitHub Actions che crea automaticamente un pacchetto contenuti giornaliero dentro `content/machine/daily/`.
 - `.env.example`
   Elenco chiaro dei segreti che dovrai configurare.
 
@@ -199,6 +203,24 @@ Genera script verticali con OpenAI:
 OPENAI_API_KEY=... python3 scripts/build_vertical_scripts.py --slug bbva --base-url https://tuodominio.it --use-openai
 ```
 
+Genera un daily package completo per l'offerta del giorno:
+
+```bash
+python3 scripts/build_daily_content_package.py --slug auto --base-url https://tuodominio.it
+```
+
+Genera un daily package per Trade Republic:
+
+```bash
+python3 scripts/build_daily_content_package.py --slug trade-republic --base-url https://tuodominio.it
+```
+
+Genera un daily package con OpenAI:
+
+```bash
+OPENAI_API_KEY=... python3 scripts/build_daily_content_package.py --slug bbva --base-url https://tuodominio.it --use-openai
+```
+
 ## Workflow blog pronto all'uso
 
 - Ogni lunedi GitHub Actions genera automaticamente una bozza `roundup` in `content/blog/drafts/`.
@@ -209,7 +231,6 @@ OPENAI_API_KEY=... python3 scripts/build_vertical_scripts.py --slug bbva --base-
 
 ## Workflow contenuti pronto all'uso
 
-- Ogni giorno lavorativo GitHub Actions genera automaticamente un content pack in `content/machine/packs/`.
 - Da `Actions -> Content Machine` puoi anche lanciare a mano:
   - un pack per una specifica offerta
   - un pack automatico dell'offerta del giorno
@@ -218,11 +239,28 @@ OPENAI_API_KEY=... python3 scripts/build_vertical_scripts.py --slug bbva --base-
 
 ## Workflow verticali pronto all'uso
 
-- Ogni giorno lavorativo GitHub Actions genera automaticamente uno script verticale in `content/machine/verticals/`.
 - Da `Actions -> Vertical Script Machine` puoi anche lanciare a mano:
   - lo script dell'offerta del giorno
   - uno script dedicato a una singola offerta
   - una versione con OpenAI, se hai configurato `OPENAI_API_KEY`
+
+## Workflow daily factory pronto all'uso
+
+- Ogni giorno lavorativo GitHub Actions genera automaticamente un pacchetto completo in `content/machine/daily/`.
+- Da `Actions -> Daily Content Factory` puoi anche lanciare a mano:
+  - il pacchetto dell'offerta del giorno
+  - un pacchetto dedicato a una singola offerta
+  - una versione con OpenAI, se hai configurato `OPENAI_API_KEY`
+
+Dentro ogni cartella daily trovi:
+
+- `daily-brief.md`
+- `content-pack.md`
+- `vertical-scripts.md`
+- `telegram-message.json`
+- `telegram-caption.html`
+- `promo-card.png`
+- caption e testi rapidi per social e DM
 
 ## Roadmap consigliata
 

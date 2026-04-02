@@ -1,16 +1,8 @@
-name: Content Machine
+name: Daily Content Factory
 
 on:
   workflow_dispatch:
     inputs:
-      mode:
-        description: "Tipo di output"
-        required: true
-        default: "offer"
-        type: choice
-        options:
-          - offer
-          - weekly
       slug:
         description: "Offerta da usare, oppure auto"
         required: true
@@ -23,15 +15,18 @@ on:
           - revolut
           - trade-republic
       use_openai:
-        description: "Usa OpenAI per testi piu naturali"
+        description: "Usa OpenAI per pack e script piu naturali"
         required: true
         default: false
         type: boolean
+  schedule:
+    - cron: "0 7 * * 1-5"
+
 permissions:
   contents: write
 
 jobs:
-  generate-content-pack:
+  build-daily-package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,14 +37,8 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Pick mode
-        id: mode
-        run: |
-          if [ -n "${{ github.event.inputs.mode }}" ]; then
-            echo "value=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=offer" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Install Python dependencies
+        run: python3 -m pip install --upgrade pip openai pillow
 
       - name: Pick slug
         id: slug
@@ -60,36 +49,44 @@ jobs:
             echo "value=auto" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build template content pack
+      - name: Build template daily package
         if: ${{ github.event.inputs.use_openai != 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
         run: |
-          python3 scripts/build_content_pack.py \
-            --mode "${{ steps.mode.outputs.value }}" \
+          ROTATION_ARGS=""
+          if [ "${{ steps.slug.outputs.value }}" = "auto" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
+          fi
+          python3 scripts/build_daily_content_package.py \
             --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${SITE_BASE_URL}"
+            --base-url "${SITE_BASE_URL}" \
+            ${ROTATION_ARGS}
 
-      - name: Build AI content pack
+      - name: Build AI daily package
         if: ${{ github.event.inputs.use_openai == 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python3 scripts/build_content_pack.py \
-            --mode "${{ steps.mode.outputs.value }}" \
+          ROTATION_ARGS=""
+          if [ "${{ steps.slug.outputs.value }}" = "auto" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
+          fi
+          python3 scripts/build_daily_content_package.py \
             --slug "${{ steps.slug.outputs.value }}" \
             --base-url "${SITE_BASE_URL}" \
-            --use-openai
+            --use-openai \
+            ${ROTATION_ARGS}
 
-      - name: Commit generated content
+      - name: Commit generated daily package
         run: |
-          git add content/machine
+          git add content/machine/daily
           if git diff --cached --quiet; then
             echo "Nessuna modifica da salvare."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Add automated content pack"
+          git commit -m "Add daily content package"
           git push

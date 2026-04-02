@@ -44,7 +44,7 @@ jobs:
       - name: Render Telegram message
         run: |
           ROTATION_ARGS=""
-          if [ "${{ steps.slug.outputs.value }}" = "auto" ]; then
+          if [ "${{ steps.slug.outputs.value }}" = "auto" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
           fi
           python3 scripts/render_telegram_post.py \
