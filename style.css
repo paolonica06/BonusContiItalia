@@ -881,6 +881,14 @@ ol {
   font-weight: 700;
 }
 
+.social-card .button-link {
+  margin-top: 18px;
+}
+
+.contact-panel .muted {
+  margin-top: 10px;
+}
+
 .sticky-cta {
   position: fixed;
   left: 50%;
@@ -895,13 +903,28 @@ ol {
   z-index: 10;
 }
 
+.sticky-cta-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .sticky-cta a {
   display: block;
+  flex: 1 1 180px;
   text-align: center;
   color: #fff;
   text-decoration: none;
   font-family: "Trebuchet MS", Verdana, sans-serif;
   font-weight: 700;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(31, 143, 255, 0.92), rgba(19, 120, 220, 0.96));
+}
+
+.sticky-cta a.secondary-link {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 footer {

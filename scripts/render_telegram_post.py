@@ -51,17 +51,13 @@ def build_channel_url(site_config: dict) -> str:
     return ""
 
 
-def get_first_social_button(site_config: dict) -> tuple[str, str] | None:
+def get_contact_buttons(site_config: dict) -> list[tuple[str, str]]:
     socials = site_config.get("socials", {})
     options = [
-        ("TikTok", socials.get("tiktok_url", "").strip()),
-        ("Instagram", socials.get("instagram_url", "").strip()),
-        ("YouTube", socials.get("youtube_url", "").strip()),
+        ("WhatsApp", socials.get("whatsapp_url", "").strip()),
+        ("Telegram diretto", socials.get("telegram_contact_url", "").strip()),
     ]
-    for label, url in options:
-        if url:
-            return label, url
-    return None
+    return [(label, url) for label, url in options if url]
 
 
 def humanize_difficulty(value: str) -> str:
@@ -164,7 +160,7 @@ def safety_line(offer: dict) -> str:
     return "Controlla l'importo in app e completa ogni requisito prima di aspettare il premio."
 
 
-def build_text(offer: dict, guide_url: str) -> str:
+def build_text(offer: dict, guide_url: str, has_direct_contacts: bool) -> str:
     name = html.escape(offer["name"])
     effective_gain = html.escape(offer["effective_gain"])
     effective_note = html.escape(offer["effective_gain_note"])
@@ -207,6 +203,9 @@ def build_text(offer: dict, guide_url: str) -> str:
     if support_short:
         lines.extend(["", f"🤝 <b>Supporto:</b> {support_short} se ti serve per partire."])
 
+    if has_direct_contacts:
+        lines.extend(["", "📲 <b>Hai dubbi?</b> Scrivimi direttamente dai pulsanti qui sotto."])
+
     lines.extend(["", call_to_action])
 
     return "\n".join(lines)
@@ -216,44 +215,58 @@ def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
     guide_url = build_guide_url(base_url, offer.get("guide_url", ""))
     site_url = base_url
     channel_url = build_channel_url(site_config)
-    extra_social = get_first_social_button(site_config)
+    direct_contacts = dict(get_contact_buttons(site_config))
+    whatsapp_url = direct_contacts.get("WhatsApp", "")
+    telegram_contact_url = direct_contacts.get("Telegram diretto", "")
 
     inline_keyboard: list[list[dict[str, str]]] = []
 
     first_row: list[dict[str, str]] = []
     if guide_url:
-        first_row.append({"text": "Apri guida bonus", "url": guide_url})
+        first_row.append({"text": "Guida bonus", "url": guide_url})
     elif offer.get("official_url"):
-        first_row.append({"text": "Attiva la promo", "url": offer["official_url"]})
+        first_row.append({"text": "Attiva promo", "url": offer["official_url"]})
 
-    if site_url:
+    if whatsapp_url:
+        first_row.append({"text": "WhatsApp", "url": whatsapp_url})
+    elif site_url:
         first_row.append({"text": "Vai al sito", "url": site_url})
 
     if first_row:
         inline_keyboard.append(first_row[:2])
 
     second_row: list[dict[str, str]] = []
-    if channel_url:
-        second_row.append({"text": "Altri bonus attivi", "url": channel_url})
+    if telegram_contact_url:
+        second_row.append({"text": "Telegram diretto", "url": telegram_contact_url})
 
-    if extra_social and extra_social[1] != channel_url:
-        second_row.append({"text": extra_social[0], "url": extra_social[1]})
+    if site_url and all(button["url"] != site_url for row in inline_keyboard for button in row):
+        second_row.append({"text": "Vai al sito", "url": site_url})
+    elif channel_url and channel_url != telegram_contact_url:
+        second_row.append({"text": "Canale bonus", "url": channel_url})
 
     if second_row:
         inline_keyboard.append(second_row[:2])
 
+    third_row: list[dict[str, str]] = []
+    if channel_url and channel_url != telegram_contact_url:
+        third_row.append({"text": "Canale bonus", "url": channel_url})
+
     if guide_url and offer.get("official_url"):
-        inline_keyboard.append([{"text": "Controlla termini", "url": offer["official_url"]}])
+        third_row.append({"text": "Controlla termini", "url": offer["official_url"]})
+
+    if third_row:
+        inline_keyboard.append(third_row[:2])
 
     return {"inline_keyboard": inline_keyboard}
 
 
 def build_payload(offer: dict, site_config: dict, base_url: str) -> dict:
     guide_url = build_guide_url(base_url, offer.get("guide_url", ""))
+    has_direct_contacts = bool(get_contact_buttons(site_config))
     return {
         "slug": offer["slug"],
         "offer_name": offer["name"],
-        "text": build_text(offer, guide_url),
+        "text": build_text(offer, guide_url, has_direct_contacts),
         "parse_mode": "HTML",
         "disable_web_page_preview": False,
         "reply_markup": build_reply_markup(offer, site_config, base_url),

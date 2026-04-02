@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "Bonus Conti Italia",
-    "base_url": "https://example.com",
+    "base_url": "https://bonusconti-italia.vercel.app",
     "locale": "it-IT",
     "timezone": "Europe/Rome"
   },
@@ -13,6 +13,8 @@
   },
   "socials": {
     "telegram_url": "https://t.me/bonuscontiitalia",
+    "telegram_contact_url": "https://t.me/bonuscontiita",
+    "whatsapp_url": "https://wa.me/393519397339?text=Ciao%2C%20vorrei%20una%20mano%20per%20iniziare%20con%20i%20bonus.",
     "instagram_url": "",
     "tiktok_url": "",
     "youtube_url": ""
