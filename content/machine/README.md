@@ -8,6 +8,8 @@ Questa cartella contiene i pacchetti contenuto generati automaticamente dalle of
   Pacchetti singoli per una specifica offerta.
 - `plans/`
   Piani editoriali settimanali.
+- `verticals/`
+  Script verticali gia divisi in varianti hook, overlay, CTA e caption.
 
 ## Output tipici
 
@@ -25,6 +27,8 @@ Ogni content pack include:
 - risposte rapide per DM
 - CTA e link rapidi
 - brief visual per card o cover
+
+Gli script dentro `verticals/` includono invece varianti gia pronte per Reel, TikTok o Shorts.
 
 ## Modalita operative
 

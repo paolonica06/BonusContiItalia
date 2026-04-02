@@ -1,0 +1,79 @@
+name: Vertical Script Machine
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Offerta da usare, oppure auto"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - bbva
+          - buddybank
+          - revolut
+          - trade-republic
+      use_openai:
+        description: "Usa OpenAI per script piu naturali"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: "40 7 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-vertical-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Pick slug
+        id: slug
+        run: |
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            echo "value=${{ github.event.inputs.slug }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=auto" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build template vertical scripts
+        if: ${{ github.event.inputs.use_openai != 'true' }}
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: |
+          python3 scripts/build_vertical_scripts.py \
+            --slug "${{ steps.slug.outputs.value }}" \
+            --base-url "${SITE_BASE_URL}"
+
+      - name: Build AI vertical scripts
+        if: ${{ github.event.inputs.use_openai == 'true' }}
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python3 scripts/build_vertical_scripts.py \
+            --slug "${{ steps.slug.outputs.value }}" \
+            --base-url "${SITE_BASE_URL}" \
+            --use-openai
+
+      - name: Commit generated vertical scripts
+        run: |
+          git add content/machine/verticals
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da salvare."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Add automated vertical scripts"
+          git push

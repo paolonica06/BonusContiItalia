@@ -24,6 +24,10 @@ Questo file e il punto di partenza per automatizzare il progetto senza rompere i
   Genera pacchetti contenuto per Telegram, video verticali, caption social, idee blog, CTA, overlay copy e risposte rapide DM.
 - `.github/workflows/content-machine.yml`
   Workflow GitHub Actions che crea in automatico pacchetti contenuto nei giorni lavorativi.
+- `scripts/build_vertical_scripts.py`
+  Genera script verticali separati per Reel, TikTok o Shorts con hook, parlato, overlay, CTA e caption.
+- `.github/workflows/vertical-machine.yml`
+  Workflow GitHub Actions che crea in automatico script verticali dedicati.
 - `.env.example`
   Elenco chiaro dei segreti che dovrai configurare.
 
@@ -177,6 +181,24 @@ Genera un content pack con OpenAI:
 OPENAI_API_KEY=... python3 scripts/build_content_pack.py --mode offer --slug bbva --base-url https://tuodominio.it --use-openai
 ```
 
+Genera script verticali per l'offerta del giorno:
+
+```bash
+python3 scripts/build_vertical_scripts.py --slug auto --base-url https://tuodominio.it
+```
+
+Genera script verticali per buddybank:
+
+```bash
+python3 scripts/build_vertical_scripts.py --slug buddybank --base-url https://tuodominio.it
+```
+
+Genera script verticali con OpenAI:
+
+```bash
+OPENAI_API_KEY=... python3 scripts/build_vertical_scripts.py --slug bbva --base-url https://tuodominio.it --use-openai
+```
+
 ## Workflow blog pronto all'uso
 
 - Ogni lunedi GitHub Actions genera automaticamente una bozza `roundup` in `content/blog/drafts/`.
@@ -192,6 +214,14 @@ OPENAI_API_KEY=... python3 scripts/build_content_pack.py --mode offer --slug bbv
   - un pack per una specifica offerta
   - un pack automatico dell'offerta del giorno
   - un piano editoriale settimanale
+  - una versione con OpenAI, se hai configurato `OPENAI_API_KEY`
+
+## Workflow verticali pronto all'uso
+
+- Ogni giorno lavorativo GitHub Actions genera automaticamente uno script verticale in `content/machine/verticals/`.
+- Da `Actions -> Vertical Script Machine` puoi anche lanciare a mano:
+  - lo script dell'offerta del giorno
+  - uno script dedicato a una singola offerta
   - una versione con OpenAI, se hai configurato `OPENAI_API_KEY`
 
 ## Roadmap consigliata
