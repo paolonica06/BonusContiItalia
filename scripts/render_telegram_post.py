@@ -40,6 +40,19 @@ def build_guide_url(base_url: str, guide_url: str) -> str:
     return f"{base_url}/{guide_url.lstrip('/')}"
 
 
+def get_activation_url(offer: dict) -> str:
+    return offer.get("referral_url", "").strip() or offer.get("official_url", "").strip()
+
+
+def get_activation_label(offer: dict) -> str:
+    custom = offer.get("referral_button_text", "").strip()
+    if custom:
+        return custom
+    if offer.get("referral_url"):
+        return "Apri link invito"
+    return "Attiva promo"
+
+
 def build_channel_url(site_config: dict) -> str:
     explicit = site_config.get("socials", {}).get("telegram_url", "").strip()
     if explicit:
@@ -167,9 +180,10 @@ def build_text(offer: dict, guide_url: str, has_direct_contacts: bool) -> str:
     bonus_note = html.escape(offer.get("bonus_note", ""))
     deposit_required = html.escape(offer.get("deposit_required", "Da verificare"))
     support_short = html.escape(offer.get("support_short", ""))
+    referral_code = html.escape(offer.get("referral_code", "").strip())
 
     call_to_action = (
-        "👇 Apri la guida e parti da li."
+        "👇 Apri la guida e usa il link o il codice gia pronti."
         if guide_url
         else "👇 Apri l'offerta dal pulsante qui sotto."
     )
@@ -200,6 +214,9 @@ def build_text(offer: dict, guide_url: str, has_direct_contacts: bool) -> str:
     if bonus_note and "chi invita" not in bonus_note.lower():
         lines.extend(["", f"📌 <b>Nota utile:</b> {bonus_note}"])
 
+    if referral_code:
+        lines.extend(["", f"🔑 <b>Codice invito:</b> <code>{referral_code}</code>"])
+
     if support_short:
         lines.extend(["", f"🤝 <b>Supporto:</b> {support_short} se ti serve per partire."])
 
@@ -213,7 +230,8 @@ def build_text(offer: dict, guide_url: str, has_direct_contacts: bool) -> str:
 
 def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
     guide_url = build_guide_url(base_url, offer.get("guide_url", ""))
-    site_url = base_url
+    activation_url = get_activation_url(offer)
+    activation_label = get_activation_label(offer)
     channel_url = build_channel_url(site_config)
     direct_contacts = dict(get_contact_buttons(site_config))
     whatsapp_url = direct_contacts.get("WhatsApp", "")
@@ -222,27 +240,19 @@ def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
     inline_keyboard: list[list[dict[str, str]]] = []
 
     first_row: list[dict[str, str]] = []
+    if activation_url:
+        first_row.append({"text": activation_label, "url": activation_url})
     if guide_url:
         first_row.append({"text": "Guida bonus", "url": guide_url})
-    elif offer.get("official_url"):
-        first_row.append({"text": "Attiva promo", "url": offer["official_url"]})
-
-    if whatsapp_url:
-        first_row.append({"text": "WhatsApp", "url": whatsapp_url})
-    elif site_url:
-        first_row.append({"text": "Vai al sito", "url": site_url})
 
     if first_row:
         inline_keyboard.append(first_row[:2])
 
     second_row: list[dict[str, str]] = []
+    if whatsapp_url:
+        second_row.append({"text": "WhatsApp", "url": whatsapp_url})
     if telegram_contact_url:
         second_row.append({"text": "Telegram diretto", "url": telegram_contact_url})
-
-    if site_url and all(button["url"] != site_url for row in inline_keyboard for button in row):
-        second_row.append({"text": "Vai al sito", "url": site_url})
-    elif channel_url and channel_url != telegram_contact_url:
-        second_row.append({"text": "Canale bonus", "url": channel_url})
 
     if second_row:
         inline_keyboard.append(second_row[:2])
@@ -251,7 +261,7 @@ def build_reply_markup(offer: dict, site_config: dict, base_url: str) -> dict:
     if channel_url and channel_url != telegram_contact_url:
         third_row.append({"text": "Canale bonus", "url": channel_url})
 
-    if guide_url and offer.get("official_url"):
+    if offer.get("official_url") and offer.get("official_url") != activation_url:
         third_row.append({"text": "Controlla termini", "url": offer["official_url"]})
 
     if third_row:

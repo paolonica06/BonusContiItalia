@@ -22,6 +22,9 @@
         "Apertura conto",
         "Primo acquisto con carta entro 90 giorni"
       ],
+      "referral_code": "77610063147010",
+      "referral_url": "https://www.bbva.it/persone/promozioni/passaparola.html",
+      "referral_button_text": "Apri promo BBVA",
       "official_url": "https://www.bbva.it/persone/promozioni/passaparola.html",
       "guide_url": "bonus-bbva.html",
       "last_verified_at": "2026-03-23",
@@ -53,6 +56,9 @@
         "Codice invito in apertura",
         "Una o piu transazioni per almeno 10€ entro 30 giorni"
       ],
+      "referral_code": "B2601MASJZE3P3",
+      "referral_url": "https://www.buddy.unicredit.it/conto-genius-buddy-bonus-5050/",
+      "referral_button_text": "Apri promo buddy",
       "official_url": "https://www.buddy.unicredit.it/conto-genius-buddy-bonus-5050/",
       "guide_url": "bonus-buddybank.html",
       "last_verified_at": "2026-03-23",
@@ -85,6 +91,8 @@
         "Ricarica da fonte esterna",
         "Carta fisica e pagamenti validi se richiesti"
       ],
+      "referral_url": "https://revolut.com/referral/?referral-code=p_nica!APR1-26-AR-L2&geo-redirect",
+      "referral_button_text": "Apri link Revolut",
       "official_url": "https://www.revolut.com/en-IT/legal/referrals-terms/",
       "guide_url": "bonus-revolut.html",
       "last_verified_at": "2026-03-23",
@@ -116,6 +124,8 @@
         "Verifica identita",
         "Prima operazione valida prevista dalla campagna"
       ],
+      "referral_url": "https://refnocode.trade.re/fl8qhxcj",
+      "referral_button_text": "Apri link Trade Republic",
       "official_url": "https://support.traderepublic.com/it-it/1034-How-can-I-participate-in-the-Refer_a_Friend-program",
       "guide_url": "bonus-trade-republic.html",
       "last_verified_at": "2026-03-23",
