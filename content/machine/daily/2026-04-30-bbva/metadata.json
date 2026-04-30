@@ -1,0 +1,22 @@
+{
+  "date": "2026-04-30",
+  "offer_slug": "bbva",
+  "offer_name": "BBVA",
+  "guide_url": "https://bonusconti-italia.vercel.app/bonus-bbva.html",
+  "base_url": "https://bonusconti-italia.vercel.app",
+  "use_openai": false,
+  "files": [
+    "content-pack.md",
+    "daily-brief.md",
+    "dm-reply.txt",
+    "instagram-caption.txt",
+    "pinned-comment.txt",
+    "promo-card.png",
+    "story-sequence.txt",
+    "telegram-caption.html",
+    "telegram-caption.txt",
+    "telegram-message.json",
+    "tiktok-caption.txt",
+    "vertical-scripts.md"
+  ]
+}

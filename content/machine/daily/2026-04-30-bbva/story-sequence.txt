@@ -1,0 +1,4 @@
+Slide 1: BBVA - bonus 10€
+Slide 2: Guadagno reale -> 10€ pieni
+Slide 3: Requisito chiave -> 1 acquisto con carta
+Slide 4: CTA -> apri la guida https://bonusconti-italia.vercel.app/bonus-bbva.html
