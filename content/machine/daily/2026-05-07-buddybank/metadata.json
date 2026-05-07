@@ -1,0 +1,22 @@
+{
+  "date": "2026-05-07",
+  "offer_slug": "buddybank",
+  "offer_name": "buddybank / buddy UniCredit",
+  "guide_url": "https://bonusconti-italia.vercel.app/bonus-buddybank.html",
+  "base_url": "https://bonusconti-italia.vercel.app",
+  "use_openai": false,
+  "files": [
+    "content-pack.md",
+    "daily-brief.md",
+    "dm-reply.txt",
+    "instagram-caption.txt",
+    "pinned-comment.txt",
+    "promo-card.png",
+    "story-sequence.txt",
+    "telegram-caption.html",
+    "telegram-caption.txt",
+    "telegram-message.json",
+    "tiktok-caption.txt",
+    "vertical-scripts.md"
+  ]
+}
