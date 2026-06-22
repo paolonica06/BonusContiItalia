@@ -1,0 +1,37 @@
+{
+  "slug": "buddybank",
+  "offer_name": "buddybank / buddy UniCredit",
+  "text": "🔥 <b>buddybank / buddy UniCredit: bonus 50€</b>\n\n💸 <b>Guadagno cliente:</b> Fino a 50€\n💳 <b>Spesa / deposito richiesto:</b> Almeno 10€ di transazioni\n\n✅ <b>Passaggi da seguire</b>\n1. Apri il servizio dalla guida qui sotto.\n2. Completa registrazione e verifica identita.\n3. Completa questi requisiti:\n• Nuovo cliente e residente in Italia\n• Codice invito in apertura\n• Una o piu transazioni per almeno 10€ entro 30 giorni\n4. Attendi il bonus previsto dalla campagna.\n\nCon carta digitale il bonus resta pieno; la carta fisica puo avere costi di emissione e spedizione.\n\n📌 <b>Nota utile:</b> Promo buddy Club 100 valida fino al 20 luglio 2026\n\n🔑 <b>Codice invito:</b> <code>B2601MASJZE3P3</code>\n\n🤝 <b>Supporto:</b> Ti aiuto con 1€ se ti serve per partire.\n\n📲 <b>Hai dubbi?</b> Scrivimi direttamente dai pulsanti qui sotto.\n\n👇 Apri la guida e usa il link o il codice gia pronti.",
+  "parse_mode": "HTML",
+  "disable_web_page_preview": false,
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Apri promo buddy",
+          "url": "https://www.buddy.unicredit.it/conto-genius-buddy-bonus-5050/"
+        },
+        {
+          "text": "Guida bonus",
+          "url": "https://bonusconti-italia.vercel.app/bonus-buddybank.html"
+        }
+      ],
+      [
+        {
+          "text": "WhatsApp",
+          "url": "https://wa.me/393519397339?text=Ciao%2C%20vorrei%20una%20mano%20per%20iniziare%20con%20i%20bonus."
+        },
+        {
+          "text": "Telegram diretto",
+          "url": "https://t.me/bonuscontiita"
+        }
+      ],
+      [
+        {
+          "text": "Canale bonus",
+          "url": "https://t.me/bonuscontiitalia"
+        }
+      ]
+    ]
+  }
+}
