@@ -1,0 +1,41 @@
+{
+  "slug": "revolut",
+  "offer_name": "Revolut",
+  "text": "🔥 <b>Revolut: bonus Variabile</b>\n\n💸 <b>Guadagno cliente:</b> Da verificare in app\n💳 <b>Spesa / deposito richiesto:</b> Ricarica da fonte esterna\n\n✅ <b>Passaggi da seguire</b>\n1. Apri il servizio dalla guida qui sotto.\n2. Completa registrazione e verifica identita.\n3. Completa questi requisiti:\n• Registrazione dal link corretto\n• Verifica identita\n• Ricarica da fonte esterna\n4. Attendi il bonus previsto dalla campagna.\n\nI termini consultati non pubblicano un importo cash fisso per il nuovo cliente.\n\n📌 <b>Nota utile:</b> Il premio standard viene definito nella schermata inviti dell&#x27;app\n\n🤝 <b>Supporto:</b> Supporto 1€ se ti serve per partire.\n\n📲 <b>Hai dubbi?</b> Scrivimi direttamente dai pulsanti qui sotto.\n\n👇 Apri la guida e usa il link o il codice gia pronti.",
+  "parse_mode": "HTML",
+  "disable_web_page_preview": false,
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Apri link Revolut",
+          "url": "https://revolut.com/referral/?referral-code=p_nica!APR1-26-AR-L2&geo-redirect"
+        },
+        {
+          "text": "Guida bonus",
+          "url": "https://bonusconti-italia.vercel.app/bonus-revolut.html"
+        }
+      ],
+      [
+        {
+          "text": "WhatsApp",
+          "url": "https://wa.me/393519397339?text=Ciao%2C%20vorrei%20una%20mano%20per%20iniziare%20con%20i%20bonus."
+        },
+        {
+          "text": "Telegram diretto",
+          "url": "https://t.me/bonuscontiita"
+        }
+      ],
+      [
+        {
+          "text": "Canale bonus",
+          "url": "https://t.me/bonuscontiitalia"
+        },
+        {
+          "text": "Controlla termini",
+          "url": "https://www.revolut.com/en-IT/legal/referrals-terms/"
+        }
+      ]
+    ]
+  }
+}
