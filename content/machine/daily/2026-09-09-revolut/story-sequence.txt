@@ -1,0 +1,4 @@
+Slide 1: Revolut - bonus Variabile
+Slide 2: Guadagno reale -> Da verificare in app
+Slide 3: Requisito chiave -> Ricarica da fonte esterna
+Slide 4: CTA -> apri la guida https://bonusconti-italia.vercel.app/bonus-revolut.html
