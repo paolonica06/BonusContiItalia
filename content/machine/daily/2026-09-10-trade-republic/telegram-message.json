@@ -1,0 +1,41 @@
+{
+  "slug": "trade-republic",
+  "offer_name": "Trade Republic",
+  "text": "🔥 <b>Trade Republic: bonus Variabile</b>\n\n💸 <b>Guadagno cliente:</b> Da verificare\n💳 <b>Spesa / deposito richiesto:</b> Prima operazione valida prevista dalla campagna\n\n✅ <b>Passaggi da seguire</b>\n1. Apri il servizio dalla guida qui sotto.\n2. Completa registrazione e verifica identita.\n3. Completa questi requisiti:\n• Registrazione dal link corretto\n• Verifica identita\n• Prima operazione valida prevista dalla campagna\n4. Attendi il bonus previsto dalla campagna.\n\nIl valore dipende dalle condizioni mostrate nell&#x27;app e dalla campagna attiva.\n\n📌 <b>Nota utile:</b> Premio personalizzato in base alla campagna attiva\n\n🤝 <b>Supporto:</b> Supporto 1€ se ti serve per partire.\n\n📲 <b>Hai dubbi?</b> Scrivimi direttamente dai pulsanti qui sotto.\n\n👇 Apri la guida e usa il link o il codice gia pronti.",
+  "parse_mode": "HTML",
+  "disable_web_page_preview": false,
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Apri link Trade Republic",
+          "url": "https://refnocode.trade.re/fl8qhxcj"
+        },
+        {
+          "text": "Guida bonus",
+          "url": "https://bonusconti-italia.vercel.app/bonus-trade-republic.html"
+        }
+      ],
+      [
+        {
+          "text": "WhatsApp",
+          "url": "https://wa.me/393519397339?text=Ciao%2C%20vorrei%20una%20mano%20per%20iniziare%20con%20i%20bonus."
+        },
+        {
+          "text": "Telegram diretto",
+          "url": "https://t.me/bonuscontiita"
+        }
+      ],
+      [
+        {
+          "text": "Canale bonus",
+          "url": "https://t.me/bonuscontiitalia"
+        },
+        {
+          "text": "Controlla termini",
+          "url": "https://support.traderepublic.com/it-it/1034-How-can-I-participate-in-the-Refer_a_Friend-program"
+        }
+      ]
+    ]
+  }
+}
