@@ -3,19 +3,24 @@ name: Telegram Offer Update
 on:
   workflow_dispatch:
     inputs:
-      slug:
-        description: "Slug dell'offerta da pubblicare"
+      mode:
+        description: "auto = solo cambi (+ riepilogo il lunedi), force-weekly = riepilogo ora, dry-run = stampa senza inviare"
         required: true
         default: "auto"
         type: choice
         options:
           - auto
-          - bbva
-          - buddybank
-          - revolut
-          - trade-republic
+          - force-weekly
+          - dry-run
   schedule:
-    - cron: "30 8 * * 1-5"
+    - cron: "30 8 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-offer
+  cancel-in-progress: false
 
 jobs:
   telegram-update:
@@ -30,88 +35,39 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: python3 -m pip install --upgrade pip openai pillow
-
-      - name: Pick offer slug
-        id: slug
-        run: |
-          if [ -n "${{ github.event.inputs.slug }}" ]; then
-            echo "value=${{ github.event.inputs.slug }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=auto" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Render Telegram message
-        run: |
-          ROTATION_ARGS=""
-          if [ "${{ steps.slug.outputs.value }}" = "auto" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
-          fi
-          python3 scripts/render_telegram_post.py \
-            --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${{ secrets.SITE_BASE_URL }}" \
-            ${ROTATION_ARGS} > telegram-message.json
-          echo "Messaggio generato:"
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          payload = json.loads(Path("telegram-message.json").read_text(encoding="utf-8"))
-          print(f"Offerta selezionata: {payload.get('offer_name')} ({payload.get('slug')})")
-          print("")
-          print(payload.get("text", ""))
-          print("")
-          print("Pulsanti:")
-          for row in payload.get("reply_markup", {}).get("inline_keyboard", []):
-              print(" | ".join(button.get("text", "") for button in row))
-          PY
-
-      - name: Extract selected offer slug
-        id: selected
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          payload = json.loads(Path("telegram-message.json").read_text(encoding="utf-8"))
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
-              handle.write(f"slug={payload['slug']}\n")
-          PY
-
-      - name: Generate promo image
-        env:
-          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-        run: |
-          python3 scripts/generate_telegram_card.py \
-            --slug "${{ steps.selected.outputs.slug }}" \
-            --base-url "${SITE_BASE_URL}" \
-            --out tmp/telegram/promo-card.png
-
-      - name: Attach promo image to Telegram payload
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          payload_path = Path("telegram-message.json")
-          payload = json.loads(payload_path.read_text(encoding="utf-8"))
-          payload["photo_path"] = "tmp/telegram/promo-card.png"
-          payload_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-          PY
+        run: python3 -m pip install --upgrade pip pillow
 
       - name: Check Telegram configuration
         env:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MODE: ${{ github.event.inputs.mode || 'auto' }}
         run: |
-          if [ -z "${TELEGRAM_CHAT_ID}" ]; then
+          if [ "${MODE}" != "dry-run" ] && [ -z "${TELEGRAM_CHAT_ID}" ]; then
             echo "TELEGRAM_CHAT_ID mancante"
             exit 1
           fi
-          echo "TELEGRAM_CHAT_ID configurato."
+          echo "Modalita: ${MODE}"
 
-      - name: Send Telegram message
+      - name: Publish changes and weekly summary
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python3 scripts/send_telegram.py < telegram-message.json
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          MODE: ${{ github.event.inputs.mode || 'auto' }}
+        run: |
+          python3 scripts/telegram_changes.py \
+            --mode "${MODE}" \
+            --base-url "${SITE_BASE_URL}"
+
+      - name: Commit Telegram state
+        run: |
+          git add data/telegram-state.json
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica allo stato."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Aggiorna stato Telegram"
+          git pull --rebase
+          git push

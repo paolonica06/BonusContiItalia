@@ -14,8 +14,10 @@ Questo file e il punto di partenza per automatizzare il progetto senza rompere i
   Genera una card promo per Telegram. Se `OPENAI_API_KEY` e disponibile, puo usare uno sfondo AI; altrimenti usa un layout locale elegante.
 - `scripts/send_telegram.py`
   Invia un messaggio su Telegram usando il bot token e il chat id, con supporto a testo o foto + caption + pulsanti.
+- `scripts/telegram_changes.py`
+  Post Telegram solo quando un'offerta cambia (importi, requisiti, scadenza/note, stato, titolo), confrontando un'impronta con `data/telegram-state.json`. Il lunedi aggiunge il riepilogo settimanale (una riga per banca, con link alla guida e mai il link invito). Se lo stato non esiste lo crea senza pubblicare. Nei log codici e link referral sono mascherati. Test: `python3 scripts/test_telegram_changes.py`.
 - `.github/workflows/telegram-offer.yml`
-  Workflow GitHub Actions che puo essere lanciato a mano o a orario, ruota automaticamente le offerte e genera anche l'immagine promo.
+  Gira ogni giorno e usa `telegram_changes.py`; committa `data/telegram-state.json`. Avvio manuale con `mode`: `auto` (solo cambi, riepilogo il lunedi), `force-weekly` (riepilogo subito), `dry-run` (stampa senza inviare ne salvare lo stato). Invia solo al canale in `TELEGRAM_CHAT_ID`.
 - `scripts/build_blog_draft.py`
   Genera bozze blog periodiche dalle offerte, con o senza OpenAI.
 - `.github/workflows/blog-weekly.yml`
