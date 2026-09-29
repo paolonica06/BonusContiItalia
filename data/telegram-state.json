@@ -1,0 +1,61 @@
+{
+  "offers": {
+    "bbva": {
+      "fields": {
+        "bonus_cliente": "6898b22fca33b185",
+        "bonus_cliente_fixed": "b5bea41b6c623f7c",
+        "bonus_note": "242523f982355f60",
+        "deposit_required": "228ab755d916fc6f",
+        "effective_gain": "8ea390f0023d9404",
+        "effective_gain_note": "3d07c796852e9189",
+        "name": "b9c138bec9ec2d7e",
+        "requirements": "c222b62ebdfc8f7f",
+        "status": "db0fb2bf5ebc4244"
+      },
+      "hash": "26b99e21ca17c897"
+    },
+    "buddybank": {
+      "fields": {
+        "bonus_cliente": "6a5429714c9eefa3",
+        "bonus_cliente_fixed": "b5bea41b6c623f7c",
+        "bonus_note": "044aa15ca35b5f7a",
+        "deposit_required": "5b28e540a9c39160",
+        "effective_gain": "c3c24e4d98e92941",
+        "effective_gain_note": "71d24eed9d1e43b5",
+        "name": "00be875d564da36c",
+        "requirements": "8ecef6766b7d19ae",
+        "status": "db0fb2bf5ebc4244"
+      },
+      "hash": "09adf4a0f4265ce5"
+    },
+    "revolut": {
+      "fields": {
+        "bonus_cliente": "e5752e7c447dd21f",
+        "bonus_cliente_fixed": "fcbcf165908dd18a",
+        "bonus_note": "a29a9ab452881513",
+        "deposit_required": "cd9b0b1f33e43fa2",
+        "effective_gain": "18cad365e75ae750",
+        "effective_gain_note": "92f1f9589ab43a16",
+        "name": "032f661e6b1c6742",
+        "requirements": "8a6df50a472735b9",
+        "status": "db0fb2bf5ebc4244"
+      },
+      "hash": "f469711ad0515cb2"
+    },
+    "trade-republic": {
+      "fields": {
+        "bonus_cliente": "e5752e7c447dd21f",
+        "bonus_cliente_fixed": "fcbcf165908dd18a",
+        "bonus_note": "0050bde7f9cfd56d",
+        "deposit_required": "20cd4a4af5ca9228",
+        "effective_gain": "d06134c383b681fa",
+        "effective_gain_note": "b8cfae7eeb7c010e",
+        "name": "bfff1ea5ed425158",
+        "requirements": "d1e2eb9b98e8ee3f",
+        "status": "db0fb2bf5ebc4244"
+      },
+      "hash": "52bd6185e8cab807"
+    }
+  },
+  "version": 1
+}
