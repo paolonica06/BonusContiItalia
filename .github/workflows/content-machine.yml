@@ -22,11 +22,6 @@ on:
           - buddybank
           - revolut
           - trade-republic
-      use_openai:
-        description: "Usa OpenAI per testi piu naturali"
-        required: true
-        default: false
-        type: boolean
 permissions:
   contents: write
 
@@ -61,7 +56,6 @@ jobs:
           fi
 
       - name: Build template content pack
-        if: ${{ github.event.inputs.use_openai != 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
         run: |
@@ -69,18 +63,6 @@ jobs:
             --mode "${{ steps.mode.outputs.value }}" \
             --slug "${{ steps.slug.outputs.value }}" \
             --base-url "${SITE_BASE_URL}"
-
-      - name: Build AI content pack
-        if: ${{ github.event.inputs.use_openai == 'true' }}
-        env:
-          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          python3 scripts/build_content_pack.py \
-            --mode "${{ steps.mode.outputs.value }}" \
-            --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${SITE_BASE_URL}" \
-            --use-openai
 
       - name: Commit generated content
         run: |

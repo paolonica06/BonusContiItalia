@@ -21,11 +21,6 @@ on:
           - buddybank
           - revolut
           - trade-republic
-      use_openai:
-        description: "Usa OpenAI per il testo"
-        required: true
-        default: false
-        type: boolean
   schedule:
     - cron: "15 9 * * 1"
 
@@ -63,7 +58,6 @@ jobs:
           fi
 
       - name: Build template draft
-        if: ${{ github.event.inputs.use_openai != 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
         run: |
@@ -76,25 +70,6 @@ jobs:
             python3 scripts/build_blog_draft.py \
               --mode roundup \
               --base-url "${SITE_BASE_URL}"
-          fi
-
-      - name: Build AI draft
-        if: ${{ github.event.inputs.use_openai == 'true' }}
-        env:
-          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          if [ "${{ steps.mode.outputs.value }}" = "offer" ]; then
-            python3 scripts/build_blog_draft.py \
-              --mode offer \
-              --slug "${{ steps.slug.outputs.value }}" \
-              --base-url "${SITE_BASE_URL}" \
-              --use-openai
-          else
-            python3 scripts/build_blog_draft.py \
-              --mode roundup \
-              --base-url "${SITE_BASE_URL}" \
-              --use-openai
           fi
 
       - name: Commit generated draft

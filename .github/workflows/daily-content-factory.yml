@@ -14,11 +14,6 @@ on:
           - buddybank
           - revolut
           - trade-republic
-      use_openai:
-        description: "Usa OpenAI per pack e script piu naturali"
-        required: true
-        default: false
-        type: boolean
   schedule:
     - cron: "0 7 * * 1-5"
 
@@ -50,7 +45,6 @@ jobs:
           fi
 
       - name: Build template daily package
-        if: ${{ github.event.inputs.use_openai != 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
         run: |
@@ -61,22 +55,6 @@ jobs:
           python3 scripts/build_daily_content_package.py \
             --slug "${{ steps.slug.outputs.value }}" \
             --base-url "${SITE_BASE_URL}" \
-            ${ROTATION_ARGS}
-
-      - name: Build AI daily package
-        if: ${{ github.event.inputs.use_openai == 'true' }}
-        env:
-          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          ROTATION_ARGS=""
-          if [ "${{ steps.slug.outputs.value }}" = "auto" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            ROTATION_ARGS="--rotation-index ${{ github.run_number }}"
-          fi
-          python3 scripts/build_daily_content_package.py \
-            --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${SITE_BASE_URL}" \
-            --use-openai \
             ${ROTATION_ARGS}
 
       - name: Commit generated daily package

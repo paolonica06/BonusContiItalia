@@ -14,11 +14,6 @@ on:
           - buddybank
           - revolut
           - trade-republic
-      use_openai:
-        description: "Usa OpenAI per script piu naturali"
-        required: true
-        default: false
-        type: boolean
 permissions:
   contents: write
 
@@ -44,24 +39,12 @@ jobs:
           fi
 
       - name: Build template vertical scripts
-        if: ${{ github.event.inputs.use_openai != 'true' }}
         env:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
         run: |
           python3 scripts/build_vertical_scripts.py \
             --slug "${{ steps.slug.outputs.value }}" \
             --base-url "${SITE_BASE_URL}"
-
-      - name: Build AI vertical scripts
-        if: ${{ github.event.inputs.use_openai == 'true' }}
-        env:
-          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          python3 scripts/build_vertical_scripts.py \
-            --slug "${{ steps.slug.outputs.value }}" \
-            --base-url "${SITE_BASE_URL}" \
-            --use-openai
 
       - name: Commit generated vertical scripts
         run: |
