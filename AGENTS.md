@@ -14,7 +14,7 @@ Tracker: GitHub Issues (`docs/agents/issue-tracker.md`).
 ## Mappa dei file
 
 - `index.html`, `bonus-*.html`, `come-iniziare.html`: pagine del sito; stile in `style.css`.
-- `assets/`: logo, icone, `analytics.js`.
+- `assets/`: logo, icone.
 - `data/offers.json`: offerte, bonus, link e codici invito. Fonte unica dei dati.
 - `data/site-config.json`: configurazione del sito.
 - `content/`: contenuti generati (blog, pacchetti giornalieri, script).
@@ -29,8 +29,8 @@ Tracker: GitHub Issues (`docs/agents/issue-tracker.md`).
 python3 scripts/check_site.py
 ```
 
-Controlla JSON, meta di ogni pagina, link interni, dicitura referral, compilazione degli script.
-Exit 1 = errori: non fare push. Gli AVVISI non bloccano (finché non c'è l'issue #2).
+Controlla JSON, meta di ogni pagina, link interni, dicitura referral («Link con il mio codice invito» in ogni pagina con link invito), privacy.html linkata da ogni pagina, compilazione degli script.
+Exit 1 = errori: non fare push.
 Per le modifiche visibili servono anche screenshot reali (`docs/agents/ui-ux-workflow.md`).
 
 ## Flusso

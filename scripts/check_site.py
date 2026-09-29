@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 errors = []
 warnings = []
-REFERRAL_WORDS = ("codice invito", "referral", "#adv")
+REFERRAL_NOTE = "Link con il mio codice invito"
 SKIP_PREFIXES = ("http://", "https://", "mailto:", "tel:", "#", "//", "data:", "javascript:")
 
 
@@ -104,14 +104,18 @@ def check_pages(domains):
             errors.append(f"{name}: manca lang=\"it\"")
         for link in parser.links:
             target = re.split(r"[?#]", link)[0]
-            if not target:
+            if not target or target.startswith("/_vercel/"):
                 continue
             base = ROOT if target.startswith("/") else page.parent
             if not (base / target.lstrip("/")).exists():
                 errors.append(f"{name}: link interno rotto")
         has_bank_link = any(urlparse(u).netloc.lower() in domains for u in parser.external)
-        if has_bank_link and not any(w in text.lower() for w in REFERRAL_WORDS):
-            warnings.append(f"{name}: link referral senza dicitura referral")
+        if has_bank_link and name != "privacy.html" and REFERRAL_NOTE not in text:
+            errors.append(f"{name}: link invito senza la dicitura «{REFERRAL_NOTE}»")
+        if name != "privacy.html" and 'href="privacy.html"' not in text:
+            errors.append(f"{name}: manca il link a privacy.html")
+    if not (ROOT / "privacy.html").exists():
+        errors.append("privacy.html: pagina mancante")
     return len(pages)
 
 
