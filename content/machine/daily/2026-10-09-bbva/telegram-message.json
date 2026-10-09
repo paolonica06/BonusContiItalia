@@ -1,0 +1,37 @@
+{
+  "slug": "bbva",
+  "offer_name": "BBVA",
+  "text": "🔥 <b>BBVA: bonus 10€</b>\n\n💸 <b>Guadagno cliente:</b> 10€ pieni\n💳 <b>Spesa / deposito richiesto:</b> 1 acquisto con carta\n\n✅ <b>Passaggi da seguire</b>\n1. Apri il servizio dalla guida qui sotto.\n2. Completa registrazione e verifica identita.\n3. Completa questi requisiti:\n• Nuovo cliente BBVA\n• Apertura conto\n• Primo acquisto con carta entro 90 giorni\n4. Attendi il bonus previsto dalla campagna.\n\nServe almeno un acquisto valido con carta entro 90 giorni.\n\n🔑 <b>Codice invito:</b> <code>77610063147010</code>\n\n🤝 <b>Supporto:</b> Ti mando io 1€ se ti serve per partire.\n\n📲 <b>Hai dubbi?</b> Scrivimi direttamente dai pulsanti qui sotto.\n\n👇 Apri la guida e usa il link o il codice gia pronti.",
+  "parse_mode": "HTML",
+  "disable_web_page_preview": false,
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Apri promo BBVA",
+          "url": "https://www.bbva.it/persone/promozioni/passaparola.html"
+        },
+        {
+          "text": "Guida bonus",
+          "url": "https://bonusconti-italia.vercel.app/bonus-bbva.html"
+        }
+      ],
+      [
+        {
+          "text": "WhatsApp",
+          "url": "https://wa.me/393519397339?text=Ciao%2C%20vorrei%20una%20mano%20per%20iniziare%20con%20i%20bonus."
+        },
+        {
+          "text": "Telegram diretto",
+          "url": "https://t.me/bonuscontiita"
+        }
+      ],
+      [
+        {
+          "text": "Canale bonus",
+          "url": "https://t.me/bonuscontiitalia"
+        }
+      ]
+    ]
+  }
+}
